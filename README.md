@@ -316,17 +316,7 @@ resperf -d benignNamesE2.txt -s 127.0.0.1 -v -R -P <output_file>
 ```
 substituting `<output_file>` with a unique file name of your choice.
 
-To view the results, open only the benign output files from both sub-experiments. In one terminal run
-```bash
-cat <benign_user_output_file_from_sub_experiment_1>
-```
-and in the second terminal run
-```bash
-cat <benign_user_output_file_from_sub_experiment_2>
-```
-substituting with your output file names.
-
-Compare the benign user throughput present in the "responses_per_sec" column. You should observe that the resolver throughput for benign users while NRDelegationAttack takes place is degraded.
+To view the results, open only the benign user output files from both sub-experiments. Compare the benign user throughput, the "responses_per_sec" column, between the two tests. You should observe a degradation in the resolver throughput for benign users during the NRDelegationAttack.
 
 #### (E3) Instructions measurement experiment - NXNSAttack unpatched server
 
