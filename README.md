@@ -84,7 +84,7 @@ Then to open another docker environment terminal run
 ```bash
 sudo docker exec -it <CONTAINER ID> bash
 ```
-substituting `CONTAINER ID` with your appropriate value. To open additional terminals, repeat this step.
+substituting `<CONTAINER ID>` with your appropriate value. To open additional terminals, repeat this step.
 
 Have three terminals in the Docker container open.
 
