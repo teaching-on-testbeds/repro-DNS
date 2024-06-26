@@ -199,12 +199,7 @@ From another terminal in the docker environment, query the resolver with a malic
 ```bash
 dig attack0.home.lan
 ```
-You should see the message
-```
-; <<>> DiG 9.16.6 <<>> attack0.home.lan
-;; global options: +cmd
-;; connection timed out; no servers could be reached
-```
+
 Stop the resolver and restart it with the Valgrind tool
 ```bash
 cd /etc
