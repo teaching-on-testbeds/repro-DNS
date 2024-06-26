@@ -237,7 +237,7 @@ After copying the files, run
 ```bash
 sudo chown <USERNAME>:<GROUPNAME> <local_folder_path>/callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
-for each file, to add permissions to open the files. You can run `whoami` to find your <USERNAME> and run `groups` to find your <GROUPNAME>.
+for each file, to add permissions to open the files. You can run `whoami` to find your `<USERNAME>` and run `groups` to find your `<GROUPNAME>`.
 
 In CloudLab, open the VNC window and run
 ```bash
@@ -383,7 +383,7 @@ substituting `<CONTAINER_ID>`, `<local_folder_path>`, and `<VALGRIND_TEST_NUMBER
 ```bash
 sudo chown <USERNAME>:<GROUPNAME> <local_folder_path>/callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
-for each file, to add permissions to open the files. You can run `whoami` to find your `<USERNAME>` and run `groups` to find your `<GROUPNAME>`.
+for each file, to add permissions to open the files.
 
 In CloudLab, open the VNC window and run
 ```bash
@@ -393,7 +393,7 @@ to open the result file with the KCachegrind tool. In the tool, make sure the "R
 
 #### (E4) Instructions measurement experiment - NRDelegation mitigation
 
-This experiment follows the instructions from the E1 experiment, but uses a Bind 9.16.33 resolver, which is non-vulnerable to both NXNSAttack and NRDelegation attack, instead of a Bind 9.16.6 resolver. 
+This experiment follows the instructions from the E1 experiment, but uses a Bind 9.16.33 resolver, which is non-vulnerable to both NXNSAttack and NRDelegation attack, instead of a Bind 9.16.6 resolver.
 
 To change the Bind version run
 ```bash
@@ -446,7 +446,7 @@ substituting `<CONTAINER_ID>`, `<local_folder_path>`, and `<VALGRIND_TEST_NUMBER
 ```bash
 sudo chown <USERNAME>:<GROUPNAME> <local_folder_path>/callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
-for each file, to add permissions to open the files. You can run `whoami` to find your `<USERNAME>` and run `groups` to find your `<GROUPNAME>`.
+for each file, to add permissions to open the files.
 
 In CloudLab, open the VNC window and run
 ```bash
