@@ -153,6 +153,7 @@ You should observe the whole DNS resolution route for the domain name `firewall.
 - Resolver query the SLD (from 127.0.0.1 to 127.0.0.200)
 - SLD return the address for the domain name (127.0.0.207)
 - Resolver return the address to the client (127.0.0.207)
+
 The address `firewall.home.lan` is configured in `/env/nsd_attack/home.lan.forward` and this test ensures that the resolver accesses the attack authoritative server through the root.
 
 <!-- Run experiment -->
