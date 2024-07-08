@@ -1,0 +1,24 @@
+;## NSD authoritative only DNS
+;##  delegation.com.zone .:. https://calomel.org
+;## FORWARD Zone -  delegation.com.forward
+
+$ORIGIN delegation.com.    ; default zone domain
+$TTL 86400                 ; default time to live
+
+@   IN   SOA   ns1.delegation.com. admin.delegation.com. (
+           2024062701  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Minimum TTL
+           )
+
+           NS      ns1.delegation.com.
+           NS      ns2.delegation.com.
+
+           *       IN      A       172.17.170.99
+
+
+;## NSD authoritative only DNS
+;## delegation.com.zone .:. https://calomel.org
+;## FORWARD Zone -  delegation.com.forward

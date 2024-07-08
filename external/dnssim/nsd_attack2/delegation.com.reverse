@@ -1,0 +1,24 @@
+;## NSD authoritative only DNS
+;## delegation.com.zone .:. https://calomel.org
+;## REVERSE Zone - delegation.com.reverse
+
+$ORIGIN delegation.com.  ; default zone domain
+$TTL 86400               ; default time to live
+
+@ IN SOA ns1.delegation.com. admin.delegation.com. (
+   2024062701  ; serial number
+   28800       ; Refresh
+   7200        ; Retry
+   864000      ; Expire
+   86400       ; Minimum TTL
+)
+
+@ IN NS ns1.home.lan.
+@ IN NS ns2.home.lan.
+
+99.170.17.172.in-addr.arpa. IN PTR delegation.com.
+
+
+;## NSD authoritative only DNS
+;## delegation.com.zone .:. https://calomel.org
+;## REVERSE Zone - delegation.com.reverse
