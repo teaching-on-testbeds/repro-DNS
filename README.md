@@ -1,7 +1,11 @@
 <!-- start with an intro paragraph - what we'll do, what the prerequisites are -->
 
 ## Background
+Distributed denial-of-service (DDoS) attacks are attacks in which a malicious attacker issues requests that consume a large amount of resources, resulting in performance degradation, and eventually denial of service.
 
+The Domain Name System (DNS) translates canonical names like "google.com into the IP address that applications need to connect to the resource. DNS resolvers, servers between the clients and the nameservers, respond to DNS requests by returning a cached name-to-address mapping or by forwarding the query to the DNS hierarchy until a resolution is reached. When a resolver's resources are exhausted, it is unable to complete the resolution process for legitimate clients. This kind of attack may be used to prevent users from accessing websites and web applications.
+
+The DDoS attack explored in this experiment involves a malicious client that also controls collaborating malicious authoritative nameservers. The malicious authoritative nameserver is configured with a malicious referral 
 <!-- this has background about the material. explain at a level suitable for an advanced undergrad with some background in the topic. -->
 
 ## Results
