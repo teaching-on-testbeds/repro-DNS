@@ -1,4 +1,4 @@
-# NRDelegation: a severe complexity DDoS attack
+# NRDelegationAttack: a severe complexity DDoS attack
 <!-- start with an intro paragraph - what we'll do, what the prerequisites are -->
 
 This experiment is a reproduction of the major claims presented in Afek et al. [1] and will measure the complexity of the NRDelegation distributed-denial-or-service attack and its effect on benign clients. 
@@ -20,7 +20,7 @@ The DDoS attack explored in this experiment involves a malicious client that als
 ## Results
 <!-- Here, you'll show: the original result in the paper and output from your experiment reproducing it. -->
 
-As the NXNS attack mitigations empower their NRDelegation attack, Afek et al. [1] finds that a resolver patched against the NXNS attack is more vulnerable to the attack (costs more instructions) than a non-patched resolver implementation.
+As the NXNS attack mitigations empower their NRDelegationAttack, Afek et al. [1] finds that a resolver patched against the NXNS attack is more vulnerable to the attack (costs more instructions) than a non-patched resolver implementation.
 
 For a NXNS-patched resolver, Afek et al. [1] claims that if the referral list numbers 1,500 NS names, then each NRDelegationAttack malicious query costs at least 5,600 times more CPU instructions than a benign query, reporting 3,415,000,000 instructions for a malicious query and around 195,000 for a benign query. 
 
@@ -32,21 +32,21 @@ Efforts to reproduce the instructions measurement experiments recorded 2,775,000
 <!-- graph from my experiments -->
 ![attack_cost_repro](https://github.com/user-attachments/assets/993b98a2-7da7-4241-b651-2b1acfdf4e15)
 
-(The cost(n) function was developed in Afek et al. [1]  and predicts the number of instructions executed during a NRDelegation attack on BIND9. The function depends only on the number of referrals in the referral response)
+(The cost(n) function was developed in Afek et al. [1]  and predicts the number of instructions executed during a NRDelegationAttack on BIND9. The function depends only on the number of referrals in the referral response)
 
-This experiment will measure the instructions executed for malicious and benign queries on patched and unpatched BIND9 implementations&mdash;you should observe around 200,000 instructions for a benign query, more than 2,000,000,000 instructions for a malicious query on the NXNS-patched resolver, and around 200,000,000 on the NXNS-unpatched resolver. Additionally, you will test malicious and benign queries on a resolver with mitigations against the NRDelegation attack.
+This experiment will measure the instructions executed for malicious and benign queries on patched and unpatched BIND9 implementations&mdash;you should observe around 200,000 instructions for a benign query, more than 2,000,000,000 instructions for a malicious query on the NXNS-patched resolver, and around 200,000,000 on the NXNS-unpatched resolver. Additionally, you will test malicious and benign queries on a resolver with mitigations against the NRDelegationAttack.
 
-Afek et al. [1] proposed three different mitigation mechanisms. The following figure shows the reduction in the effect of the attack under the proposed mitigations:
+Afek et al. [1] proposed three different mitigation mechanisms. The following figure shows the original results in the paper for the reduction in the effect of the attack under the proposed mitigations:
 
 <!-- graph from paper of results from mitigation methods -->
 ![mitigations_cost_paper](https://github.com/user-attachments/assets/a1aaa63c-68e4-4b52-b189-1fa4a0edc3ee)
 
-Following the responsible disclosure procedure by Afek et al. [1], Internet Systems Consortium patched BIND9 against the NRDelegation attack, limiting the number of database lookups performed when processing delegations in the 9.16.33 version [3]. The figure below summarizes the results obtained when reproducing the attack experiments for NXNS-patched, NXNS-unpatched, and NRDelegation-patched resolver implementations.
+Following the responsible disclosure procedure by Afek et al. [1], Internet Systems Consortium patched BIND9 against the NRDelegationAttack, limiting the number of database lookups performed when processing delegations, in the 9.16.33 version [3]. The figure below encompasses the results we obtained when reproducing the NRDelegationAttack on NXNS-patched, NXNS-unpatched, and NRDelegation-patched resolver implementations.
 
 <!-- my results from E1, E3, and E4 -->
 ![attack_cost_mitigation_repro](https://github.com/user-attachments/assets/a52e7eca-ce3d-43a2-8efa-aa6d48c85a73)
 
-When evaluating the effectiveness of a DDoS attack, we are interested in the attack's impact on benign client throughput (whether or not a benign client can access resources). The experiment will test resolver throughput with and without the NRDelegation attack. When the resolver is under attack, you should observe a significant performance degradation: the benign client does not receive responses, or receives less responses, for its queries (the queries per second outnumber the responses per second).
+When evaluating the effectiveness of a DDoS attack, we are interested in the attack's impact on benign client throughput (whether or not a benign client can access resources). The experiment will test resolver throughput with and without the NRDelegationAttack. When the resolver is under attack, you should observe a significant performance degradation: the benign client does not receive responses, or receives less responses, for its queries (the queries per second outnumber the responses per second).
 
 <!-- plot actual_qps and responses_per_second from my experiment -->
 
@@ -54,7 +54,7 @@ When evaluating the effectiveness of a DDoS attack, we are interested in the att
 
 ### Using Docker containers
 <!-- Get resources -->
-This experiment will measure the cost of a malicious NRDelegation attack query. For this experiment, we will use a topology of a single node with Ubuntu 20.04 or later.
+This experiment will measure the cost of a malicious NRDelegationAttack query. For this experiment, we will use a topology of a single node with Ubuntu 20.04 or later.
 
 <!-- link to CloudLab profile -->
 
@@ -346,9 +346,9 @@ sudo kcachegrind ./callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
 to open the result file with the KCachegrind tool. In the tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function. Repeat this step with the second result file and compare the results. The benign query results should be around 200,000 instructions, while the malicious query should have more than 200,000,000.
 
-#### Instructions measurement experiment - NRDelegation mitigation
+#### Instructions measurement experiment - NRDelegationAttack mitigation
 
-This experiment follows the instructions from the previous experiments, but uses a Bind 9.16.33 resolver, which is non-vulnerable to both NXNSAttack and NRDelegation attack.
+This experiment follows the instructions from the previous experiments, but uses a Bind 9.16.33 resolver, which is non-vulnerable to both NXNSAttack and NRDelegationAttack.
 
 To change the Bind version, run
 ```bash
@@ -413,7 +413,7 @@ to open the result file with the KCachegrind tool. In the tool, make sure the "R
 
 ### Using VMs
 <!-- Get resources -->
-The docker environment was sufficient for measuring the cost of a malicious NRDelegation query. To accurately measure the attack's impact on benign client traffic, we want designated machines for each entity. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server.
+The docker environment was sufficient for measuring the cost of a malicious query. To accurately measure the attack's impact on benign client traffic, we want designated machines for each entity. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server.
 <!-- image of topology -->
 <!-- link to CloudLab profile -->
 
@@ -424,7 +424,7 @@ When your nodes are ready to log in, ssh into the resolver node and run
 ```bash
 named -g
 ```
-to start BIND9.16.6 on the resolver. We use version 9.16.6 because it is a NXNS-patched version, most vulnerable to the NRDelegation attack, enabling us to measure the effect of the attack on benign client traffic.
+to start BIND9.16.6 on the resolver. We use version 9.16.6 because it is a NXNS-patched version, most vulnerable to the NRDelegationAttack, enabling us to measure the effect of the attack on benign client traffic.
 
 For each of the four authoritative servers, ssh into the node and run 
 ```
@@ -465,7 +465,7 @@ resperf -d benignNamesE2.txt -s resolver_IP -v -R -P output_file
 substituting `resolver_IP` with the correct IP address and `output_file` with a unique file name of your choice.
 
 <!-- Analyze results -->
-To view the results, open only the benign user output files from both sub-experiments. Compare the benign user throughput, the "actual_qps" versus the "responses_per_sec" column, between the two tests. In ideal conditions, the responses per second should match the actual queries per second. In real network conditions without any malicious actors, there might be slight variation between queries and responses per second. During the NRDelegation attack, you should observe a degradation in the resolver throughput for benign clients, indicated by responses per second close to 0.
+To view the results, open only the benign user output files from both sub-experiments. Compare the benign user throughput, the "actual_qps" versus the "responses_per_sec" column, between the two tests. In ideal conditions, the responses per second should match the actual queries per second. In real network conditions without any malicious actors, there might be slight variation between queries and responses per second. During the NRDelegationAttack, you should observe a degradation in the resolver throughput for benign clients, indicated by responses per second close to 0.
 
 ## Notes
 
