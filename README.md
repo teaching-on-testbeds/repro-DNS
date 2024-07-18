@@ -345,7 +345,7 @@ In Cloudlab, open the VNC window and run
 ```bash
 sudo kcachegrind ./callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
-to open the result file with the KCachegrind tool. In the tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function. Repeat this step with the second result file and compare the results. The benign query results should be around 200,000 instructions, while the malicious query should have more than 200,000,000.
+to open the result file with the KCachegrind tool. In the tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function. Repeat this step with the second result file and compare the results. The benign query results should be around 200,000 instructions, while the malicious query should have around 200,000,000.
 
 #### Instructions measurement experiment - NRDelegationAttack mitigation
 
