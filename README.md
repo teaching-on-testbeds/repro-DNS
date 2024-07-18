@@ -54,7 +54,7 @@ When evaluating the effectiveness of a DDoS attack, we are interested in the att
 
 ### Using Docker containers
 <!-- Get resources -->
-For this experiment, we will use a topology of a single node with Ubuntu 20.04 or later.
+This experiment will measure the cost of a malicious NRDelegation attack query. For this experiment, we will use a topology of a single node with Ubuntu 20.04 or later.
 
 <!-- link to CloudLab profile -->
 
@@ -240,7 +240,7 @@ From another terminal in the docker environment, query the resolver with a malic
 ```bash
 dig attack0.home.lan
 ```
-`attack0.home.lan` is a malicious query because the malicious server's zone file we configured earlier contains 1500 records that delegate the resolution of `attack0.home.lan` to a DNS non-responsive server. TYou will not receive a response with an ANSWER SECTION containing an IP address for `attack.home.lan` because the resolver was directed to a server incapable of responding to the resolver's requests.
+The malicious server's zone file we configured earlier contains 1500 records that delegate the resolution of `attack0.home.lan` to a DNS non-responsive server. You will not receive a resolution for the name `attack.home.lan` because the resolver was directed to server incapable of responding to the resolver's requests.
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool
 ```bash
