@@ -1,5 +1,4 @@
 # NRDelegation: a severe complexity DDoS attack
-
 <!-- start with an intro paragraph - what we'll do, what the prerequisites are -->
 
 This experiment is a reproduction of the major claims presented in Afek et al. [1] and will measure the complexity of the NRDelegation distributed-denial-or-service attack and its effect on benign clients. 
@@ -9,7 +8,6 @@ These experiment uses two setups, one using Docker containers and one using Virt
 You can run this experiment on Cloudlab. To reproduce this experiment on Cloudlab, you will need an account on Cloudlab, you will need to have joined a project, and you will need to have set up SSH access.
 
 ## Background
-
 <!-- this has background about the material. explain at a level suitable for an advanced undergrad with some background in the topic. -->
 
 Distributed denial-of-service (DDoS) attacks are attacks in which a malicious attacker issues requests that consume a large amount of resources, resulting in performance degradation, and eventually denial of service.
@@ -20,18 +18,17 @@ The DDoS attack explored in this experiment involves a malicious client that als
 
 
 ## Results
-
 <!-- Here, you'll show: the original result in the paper and output from your experiment reproducing it. -->
 
-Afek et al. [1] claims that if the referral list numbers 1,500 NS names, then each NRDelegationAttack malicious query costs at least 5,600 times more CPU instructions than a benign query, reporting 3,415,000,000 instructions for a malicious query and 195,000 for a benign query. Efforts to reproduce the instructions measurement experiments recorded 2,775,000,000 instructions for a malicious query.
-
 As the NXNS attack mitigations empower their NRDelegation attack, Afek et al. [1] finds that a resolver patched against the NXNS attack is more vulnerable to the attack (costs more instructions) than a non-patched resolver implementation.
+
+For a NXNS-patched resolver, Afek et al. [1] claims that if the referral list numbers 1,500 NS names, then each NRDelegationAttack malicious query costs at least 5,600 times more CPU instructions than a benign query, reporting 3,415,000,000 instructions for a malicious query and around 195,000 for a benign query. 
 
 The following figure shows the instructions executed on the resolver CPU relative to referral response size for both NXNS-patched and non-patched BIND9 resolvers from the original result in the paper:
 <!-- graph from paper -->
 ![attack_cost_paper](https://github.com/user-attachments/assets/a35ebdb7-3654-4c49-b24b-e3ca627a02a4)
 
-And from experiments reproducing the attack
+Efforts to reproduce the instructions measurement experiments recorded 2,775,000,000 instructions for a malicious query and around 200,000 instructions for a benign query on a NXNS-patched resolver.
 <!-- graph from my experiments -->
 ![attack_cost_repro](https://github.com/user-attachments/assets/993b98a2-7da7-4241-b651-2b1acfdf4e15)
 
@@ -56,13 +53,12 @@ When evaluating the effectiveness of a DDoS attack, we are interested in the att
 ## Run my experiment section
 
 ### Using Docker containers
-
 <!-- Get resources -->
 For this experiment, we will use a topology of a single node with Ubuntu 20.04 or later.
 
 <!-- link to CloudLab profile -->
 
-#### Install software
+#### Install software dependencies
 
 When your node is ready to log in, SSH into the node and run
 ```bash
@@ -174,9 +170,9 @@ Open another terminal inside the docker and run
 ```bash
 dig firewall.home.lan
 ```
-to query the resolver.
+to query the resolver for the IP address of `firewall.home.lan `.
 
-Check that the correct IP address was received in response.
+Check that the correct IP address was received in response. You should see the following sections:
 ```
 ;; QUESTION SECTION:
 ;firewall.home.lan.             IN      A
@@ -185,15 +181,15 @@ Check that the correct IP address was received in response.
 firewall.home.lan.      86400   IN      A  127.0.0.207
 ```
 
-Stop the `tcpdump` (you can use Ctrl+C), the resolver, and the authoritative servers
+Stop the `tcpdump`, the resolver, and the authoritative servers (you can use Ctrl+C).
 
-In CloudLab, open a VNC window to get a graphical user interface on the remote host. In the terminal of the VNC window run
+In Cloudlab, open a VNC window to get a graphical user interface on the remote host. In the terminal of the VNC window, run
 ```bash
 sudo wireshark -r /dump -Y "dns"
 ```
-to open Wireshark and load the file `/dump` from the capture and filter DNS requests.
+to open Wireshark and load the file `dump` from the capture, filtered for DNS traffic.
 
-You should observe the whole DNS resolution route for the domain name `firewall.home.lan` requested.
+You should observe the whole DNS resolution route for the name `firewall.home.lan` requested.
 - `firewall.home.lan` query from client to resolver (from 127.0.0.1 to 127.0.0.1)
 - Resolver query to the root server (from 127.0.0.1 to 127.0.0.2)
 - Root server return the SLD address (from 127.0.0.2 to 127.0.0.1)
@@ -206,16 +202,14 @@ The address `firewall.home.lan` is configured in `/env/nsd_attack/home.lan.forwa
 <!-- Run experiment -->
 #### Instructions measurement experiment - NXNS-patched resolver
 
-Make sure the resolver is configured to use Bind 9.16.6. To check the version run
-```bash
-named -v
-```
-If the resolver is using a different version, run
+This experiment will measure the CPU instructions executed on a NXNS-patched resolver (BIND9.16.6) during a malicious query. The number of instructions will be recorded by an instance of the Valgrind tool in the command to start the resolver.
+
+Make sure the resolver is configured to use Bind9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run
 ```bash
 cd /env/bind9_16_6
 make install
 ```
-to change the version to Bind 9.16.6
+to change the version to Bind 9.16.6.
 
 Turn on the resolver with the Valgrind tool by running
 ```bash
@@ -224,11 +218,11 @@ valgrind --tool=callgrind named -g -c /etc/named.conf
 ```
 We use `--tool=callgrind` to specify that we are using the callgrind tool.
 
-The malicious referral response should include a long list of name servers, in order to create such a list the `/env/nsd_attack/home.lan.forward` zone file needs to have 1500 records per one malicious request. From another docker terminal, run
+The malicious referral response should include a long list of name servers, in order to create such a response, the `/env/nsd_attack/home.lan.forward` zone file needs to have 1500 records per one malicious request. From another docker terminal, run
 ```bash
 cp /env/reproduction/home.lan.forward /env/nsd_attack
 ```
-to configure the zone file for the malicious authoritative server.
+to configure the zone file for the malicious authoritative server. 
 
 In two more docker terminals start the root and malicious authoritative servers. Run
 ```bash
@@ -246,8 +240,9 @@ From another terminal in the docker environment, query the resolver with a malic
 ```bash
 dig attack0.home.lan
 ```
+`attack0.home.lan` is a malicious query because the malicious server's zone file we configured earlier contains 1500 records that delegate the resolution of `attack0.home.lan` to a DNS non-responsive server. TYou will not receive a response with an ANSWER SECTION containing an IP address for `attack.home.lan` because the resolver was directed to a server incapable of responding to the resolver's requests.
 
-Stop the resolver and restart it with the Valgrind tool
+Stop the resolver (Ctrl+C) and restart it with the Valgrind tool
 ```bash
 cd /etc
 valgrind --tool=callgrind named -g -c /etc/named.conf
@@ -257,7 +252,7 @@ Now query the resolver with a legitimate query:
 ```bash
 dig test.home.lan
 ```
-You should recieve a response with the IP address of test.home.lan (127.0.0.252)
+You should recieve a response with the IP address of `test.home.lan` (127.0.0.252).
 ```
 ;; QUESTION SECTION:
 ;test.home.lan.                 IN      A
@@ -267,7 +262,7 @@ test.home.lan.          86400   IN      A  127.0.0.252
 ```
 After receiving the response, stop the resolver.
 
-Next we'll copy the results files from the docker container to the host.
+Next we'll copy the results files from the docker container to the host machine.
 In a docker container run `ls /etc` and look for files named `'callgrind.out.<VALGRIND_TEST_NUMBER>'`. Take note of the numbers. Now from the host, for each of the two results files, run
 ```bash
 sudo docker cp <CONTAINER_ID>:/etc/callgrind.out.<VALGRIND_TEST_NUMBER> <local_folder_path>/callgrind.out.<VALGRIND_TEST_NUMBER>
@@ -282,95 +277,22 @@ sudo chown <USERNAME>:<GROUPNAME> <local_folder_path>/callgrind.out.<VALGRIND_TE
 ```
 for each file, to add permissions to open the files. You can run `whoami` to find your `<USERNAME>` and run `groups` to find your `<GROUPNAME>`.
 
-In CloudLab, open the VNC window and run
+In Cloudlab, open the VNC window and run
 ```bash
 sudo kcachegrind ./callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
 to open the result file with the KCachegrind tool. In the tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function. Repeat this step with the second result file and compare the results. The benign query results should be around 200,000 instructions, while the malicious query should have more than 2,000,000,000.
 
-#### Throughput measurement experiment
-
-If the malicious authoritative zone file `/env/nsd_attack/home.lan.forward` has not yet been configured with malicious domain names as described in E1, run
-```bash
-cp /env/reproduction/home.lan.forward /env/nsd_attack
-```
-
-This experiment requires a list of benign user domain names and attacker user domain names for the Resperf tool. Run
-```bash
-python /env/reproduction/genNamesToCheck.py
-```
-to generate two output files: "benignNamesE2.txt" and "attackerNamesE2.txt".
-
-Make sure the resolver is configured to use Bind 9.16.6. To check the version run
-```bash
-named -v
-```
-If the resolver is using a different version, run
-```bash
-cd /env/bind9_16_6
-make install
-```
-to change the version to Bind 9.16.6. Then run
-```bash
-cd /etc
-named -g -c /etc/named.conf
-```
-to turn on the resolver.
-
-If the root and malicious authoritative servers are no longer running, run 
-```bash
-cd /env/nsd_root
-nsd -c nsd.conf -d -f nsd.db
-```
-to turn on the root and run
-```bash
-cd /env/nsd_attack
-nsd -c nsd.conf -d -f nsd.db
-```
-to turn on the attack server. You can check if the nsd process is running with the `ps aux | grep nsd` command.
-
-You will run two "sub"-experiments. The first experiment will measure the effect of the attack on benign users throughput. The second experiment will measure the resolver throughput without any attack.
-
-Benign and malicious users commands will be executed from two terminals inside the docker container each with an instance of the Resperf tool. The first will simulate the attacker and issue queries at a fixed rate, while the second tool will ramp up the benign user request until things start to fail. Open two terminals inside the docker, one for the malicious user and one for the benign user.
-
-In the following tests, the malicious user command should be run first but ultimately in parallel to the benign user command.
-
-From the malicious user run
-```bash
-resperf -d attackerNamesE2.txt -s 127.0.0.1 -v -m 15000 -c 60 -r 0 -R -P <output_file>
-```
-where -m is the number of QPS (15000) that are sent, -c is the duration of time (60) in which Resperf tries to send the queries, -r is the duration of time (0) in which Resperf ramps-up before sending the packets in constant time, and `<output_file>` is the output file name of your choice.
-
-From the benign user run
-```bash
-resperf -d benignNamesE2.txt -s 127.0.0.1 -v -R -P <output_file>
-```
-substituting `<output_file>` with a unique file name of your choice.
-
-Next, to measure the resolver throughput without any attack, "benignNamesE2.txt" will be used as the input files for both commands.
-
-From the malicious user run
-```bash
-resperf -d benignNamesE2.txt -s 127.0.0.1 -v -m 15000 -c 60 -r 0 -R -P <output_file>
-```
-and from the benign user run
-```bash
-resperf -d benignNamesE2.txt -s 127.0.0.1 -v -R -P <output_file>
-```
-substituting `<output_file>` with a unique file name of your choice.
-
-To view the results, open only the benign user output files from both sub-experiments. Compare the benign user throughput, the "responses_per_sec" column, between the two tests. You should observe a degradation in the resolver throughput for benign users during the NRDelegationAttack.
-
 #### Instructions measurement experiment - NXNS-unpatched resolver
 
-This experiment follows the instructions from the E1 experiment, but uses a Bind 9.16.2 resolver, which is not patched to NXNSAttack, instead of a Bind 9.16.6 resolver.
+This experiment follows the instructions from the previous, but uses a Bind 9.16.2 resolver, which is an NXNS-unpatched resolver, instead of a Bind 9.16.6 resolver. 
 
-To change the Bind version run
+To change the Bind version, run
 ```bash
 cd /env/bind9_16_2
 make install
 ```
-to configure the resolver to use Bind 9.16.2
+to configure the resolver to use Bind 9.16.2.
 
 Turn on the resolver with the Valgrind tool, run
 ```bash
@@ -390,7 +312,7 @@ nsd -c nsd.conf -d -f nsd.db
 ```
 to turn on the attack server. You can check if the nsd process is running with the `ps aux | grep nsd` command.
 
-From another terminal in the docker environment, query the resolver with a malicious query:
+From another terminal in the docker environment, query the resolver with the malicious query:
 ```bash
 dig attack0.home.lan
 ```
@@ -401,7 +323,7 @@ cd /etc
 valgrind --tool=callgrind named -g -c /etc/named.conf
 ```
 
-Now query the resolver with a legitimate query:
+Now query the resolver with the legitimate query:
 ```bash
 dig test.home.lan
 ```
@@ -418,7 +340,7 @@ sudo chown <USERNAME>:<GROUPNAME> <local_folder_path>/callgrind.out.<VALGRIND_TE
 ```
 for each file, to add permissions to open the files.
 
-In CloudLab, open the VNC window and run
+In Cloudlab, open the VNC window and run
 ```bash
 sudo kcachegrind ./callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
@@ -426,14 +348,14 @@ to open the result file with the KCachegrind tool. In the tool, make sure the "R
 
 #### Instructions measurement experiment - NRDelegation mitigation
 
-This experiment follows the instructions from the E1 experiment, but uses a Bind 9.16.33 resolver, which is non-vulnerable to both NXNSAttack and NRDelegation attack, instead of a Bind 9.16.6 resolver.
+This experiment follows the instructions from the previous experiments, but uses a Bind 9.16.33 resolver, which is non-vulnerable to both NXNSAttack and NRDelegation attack.
 
-To change the Bind version run
+To change the Bind version, run
 ```bash
 cd /env/bind9_16_33
 make install
 ```
-to configure the resolver to use Bind 9.16.2
+to configure the resolver to use Bind 9.16.33.
 
 Turn on the resolver with the Valgrind tool, run
 ```bash
@@ -451,9 +373,9 @@ to turn on the root and run
 cd /env/nsd_attack
 nsd -c nsd.conf -d -f nsd.db
 ```
-to turn on the attack server. You can check if the nsd process is running with the `ps aux | grep nsd` command.
+to turn on the attack server.
 
-From another terminal in the docker environment, query the resolver with a malicious query:
+From another terminal in the docker environment, query the resolver with the malicious query:
 ```bash
 dig attack0.home.lan
 ```
@@ -481,18 +403,17 @@ sudo chown <USERNAME>:<GROUPNAME> <local_folder_path>/callgrind.out.<VALGRIND_TE
 ```
 for each file, to add permissions to open the files.
 
-In CloudLab, open the VNC window and run
+In Cloudlab, open the VNC window and run
 ```bash
 sudo kcachegrind ./callgrind.out.<VALGRIND_TEST_NUMBER>
 ```
-to open the result file with the KCachegrind tool. In the tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function. Repeat this step with the second result file and compare the results. The benign query results should be around 200,000 instructions, while the malicious query should have less than 10,000,000.
+to open the result file with the KCachegrind tool. In the tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function. Repeat this step with the second result file and compare the results. The benign query results should be around 200,000 instructions, while the malicious query should have around 10,000,000.
 
 <!-- Analyze results -->
 
 ### Using VMs
-
 <!-- Get resources -->
-For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server.
+The docker environment was sufficient for measuring the cost of a malicious NRDelegation query. To accurately measure the attack's impact on benign client traffic, we want designated machines for each entity. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server.
 <!-- image of topology -->
 <!-- link to CloudLab profile -->
 
@@ -510,7 +431,7 @@ For each of the four authoritative servers, ssh into the node and run
 cd \etc\nsd ; sudo nsd -c nsd.conf -d -f nsd.db
 ```
 
-
+#### Throughput measurement experiment
 You will run two "sub"-experiments. The first experiment will measure the effect of the attack on benign client throughput. The second experiment will measure the throughput without an attack.
 
 Benign and malicious commands will be executed with an instance of the Resperf tool on the respective client. The malicious command will simulate the attacker and issue queries at a fixed rate, while the benign command will issue the benign user requests until failure.
