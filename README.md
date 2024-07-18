@@ -453,7 +453,7 @@ substituting `resolver_IP` with the correct IP address and `output_file` with a 
 
 The input file `attackerNamesE2.txt` contains a list of names that rely on the malicious referral response, and the malicious resperf command will issue queries to the resolver for these names. The input file `benignNamesE2.txt` contains a list of names serviced by the benign authoritative server, and the resperf command will query the resolver for these names
 
-Next, to measure the throughput without any attack, "benignNamesE2.txt" will be used as the input file for both commands (no malicious queries will be issued).
+Next, to measure the throughput without any attack, "benignNamesE2.txt" will be used as the input file for both commands (no malicious queries will be issued). To test with a clear cache stop the resolver (Ctrl+C), run `sudo rndc flush` and then restart the resolver with `named -g`.
 
 From the malicious user run
 ```bash
