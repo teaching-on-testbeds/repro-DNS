@@ -10,7 +10,7 @@ You can run this experiment on Cloudlab. To reproduce this experiment on Cloudla
 ## Background
 <!-- this has background about the material. explain at a level suitable for an advanced undergrad with some background in the topic. -->
 
-Distributed-denial-of-service (DDoS) attacks are attacks in which a malicious actor issues requests that consume a large amount of resources, resulting in performance degradation and eventually denial of service. Especially problematic are attacks when the effect of the initial bad request is amplified so the attacker does not need to use lots of resources to achieve a 
+Distributed-denial-of-service (DDoS) attacks are attacks in which a malicious actor issues requests that consume a large amount of resources, resulting in performance degradation and eventually denial of service. Especially problematic are attacks when the effect of the initial bad request is amplified so an attacker, using only few resources, achieves a significant effect on the victim.
 
 The Domain Name System (DNS) translates canonical names like "google.com" into the IP addresses that applications need to connect to the desired resource. DNS resolvers, servers between the clients and the nameservers, respond to DNS requests by returning a cached name-to-address mapping or by forwarding the query to the DNS hierarchy until a resolution is reached. When a resolver's resources are exhausted with the attacker's requests, it is unable to complete the resolution process for legitimate clients. This kind of attack may be used to prevent users from accessing websites and web applications.
 
@@ -22,7 +22,7 @@ In the NRDelegationAttack [1], the attacker controls a malicious client and at l
 <!-- Here, you'll show: the original result in the paper and output from your experiment reproducing it. -->
 
 The following figure shows the instructions executed on the resolver CPU relative to referral response size for both NXNS-patched and non-patched BIND9 resolvers from the original result in the paper:
-<!-- graph from paper -->
+
 ![attack_cost_paper](https://github.com/user-attachments/assets/a35ebdb7-3654-4c49-b24b-e3ca627a02a4)
 
 As the NXNS attack mitigations empower their NRDelegationAttack, Afek et al. [1] finds that a resolver patched against the NXNS attack is more vulnerable to the attack (costs more instructions) than a non-patched resolver implementation.
@@ -30,7 +30,7 @@ As the NXNS attack mitigations empower their NRDelegationAttack, Afek et al. [1]
 For a NXNS-patched resolver, Afek et al. [1] claims that if the referral list numbers 1,500 NS names, then each NRDelegationAttack malicious query costs at least 5,600 times more CPU instructions than a benign query, reporting 3,415,000,000 instructions for a malicious query and around 195,000 for a benign query. 
 
 Efforts to reproduce the instructions measurement experiments recorded 2,775,000,000 instructions for a malicious query and around 200,000 instructions for a benign query on a NXNS-patched resolver.
-<!-- graph from my experiments -->
+
 ![attack_cost_repro](https://github.com/user-attachments/assets/993b98a2-7da7-4241-b651-2b1acfdf4e15)
 
 (The cost(n) function was developed in Afek et al. [1]  and predicts the number of instructions executed during a NRDelegationAttack on BIND9. The function depends only on the number of referrals in the referral response)
@@ -39,17 +39,17 @@ This experiment will measure the instructions executed for malicious and benign 
 
 Afek et al. [1] proposed three different mitigation mechanisms. The following figure shows the original results in the paper for the reduction in the effect of the attack under the proposed mitigations:
 
-<!-- graph from paper of results from mitigation methods -->
 ![mitigations_cost_paper](https://github.com/user-attachments/assets/a1aaa63c-68e4-4b52-b189-1fa4a0edc3ee)
 
 Following the responsible disclosure procedure by Afek et al. [1], Internet Systems Consortium patched BIND9 against the NRDelegationAttack, limiting the number of database lookups performed when processing delegations, in the 9.16.33 version [3]. The figure below encompasses the results we obtained when reproducing the NRDelegationAttack on NXNS-patched, NXNS-unpatched, and NRDelegation-patched resolver implementations.
 
-<!-- my results from E1, E3, and E4 -->
 ![attack_cost_mitigation_repro](https://github.com/user-attachments/assets/a52e7eca-ce3d-43a2-8efa-aa6d48c85a73)
 
-When analyzing the effectiveness of a DDoS attack, we are interested in the attack's impact on benign client throughput (whether or not a benign client can access resources). The experiment will test resolver throughput with and without the NRDelegationAttack. When the resolver is under attack, you should observe a significant performance degradation: the benign client does not receive responses, or receives less responses, for its queries (the queries per second outnumber the responses per second).
+When analyzing the effectiveness of a DDoS attack, we are interested in the attack's impact on benign client throughput (whether or not a benign client can access resources). The experiment will test resolver throughput with and without the NRDelegationAttack.
 
 ![throughput_no_attack](https://github.com/user-attachments/assets/bede7339-17f8-459e-b21b-b105c0150faf)![throughput_attack](https://github.com/user-attachments/assets/14b58229-1fa5-406a-b8df-4da5f3dc43e6)
+
+When the resolver is under attack, you should observe a significant performance degradation: the benign client does not receive responses, or receives less responses, for its queries (the queries per second outnumber the responses per second).
 
 ## Run my experiment
 
@@ -550,6 +550,7 @@ to finish the server configuration.
 
 To configure the benign server, SSH into the benign_server node and run:
 ```
+sudo mkdir -p /etc/nsd
 sudo cp /local/repository/external/dnssim/nsd_benign/benign.lan.forward /etc/nsd/referral.lan.forward
 sudo cp /local/repository/external/dnssim/nsd_benign/benign.lan.reverse /etc/nsd/benign.lan.reverse
 sudo cp /local/repository/external/dnssim/nsd_benign/nsd.conf /etc/nsd/nsd.conf
@@ -581,6 +582,7 @@ to finish the server configuration.
 
 And to configure the root server, SSH into the root_server node and run:
 ```
+sudo mkdir -p /etc/nsd
 sudo cp /local/repository/external/dnssim/nsd_root/net.forward /etc/nsd/net.forward
 sudo cp /local/repository/external/dnssim/nsd_root/net.reverse /etc/nsd/net.reverse
 sudo cp /local/repository/external/dnssim/nsd_root/nsd.conf /etc/nsd/nsd.conf
@@ -619,13 +621,13 @@ In the following tests, the malicious user command should be run first, but ulti
 
 From the resolver node, run
 ```bash
-named -g
+sudo named -g
 ```
 to start the resolver.
 
 For each of the four authoritative servers, run 
 ```
-cd \etc\nsd ; sudo nsd -c nsd.conf -d -f nsd.db
+cd /etc/nsd ; sudo nsd -c nsd.conf -d -f nsd.db
 ```
 to start the servers.
 
