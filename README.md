@@ -123,10 +123,8 @@ sudo apt-get install -y kcachegrind
 #### Turning on the environment
 
 <!-- screen session -->
-This experiment requires you have 6 terminal windows open&mdash;1 terminal will the host terminal, and 5 terminals will be docker environment terminals. In this experiment the terminals will be referred to as follows:
-Host Terminal
+This experiment requires you have 6 terminal windows open&mdash;1 terminal will be a terminal on the host node, and 5 terminals will be docker environment terminals. In this experiment the terminals will be referred to as follows:
 - Terminal 1: Host
-Docker Terminals
 - Terminal 2: Resolver
 - Terminal 3: Root server
 - Terminal 4: Malicious server
