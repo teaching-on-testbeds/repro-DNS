@@ -1,0 +1,3 @@
+; Root hints for BIND
+.                    3600000  IN  NS    a.root-servers.net.
+a.root-servers.net.  3600000  IN  A     10.0.0.101
