@@ -1,0 +1,36 @@
+;## NSD authoritative only DNS
+;## delegation.lan.zone .:. https://calomel.org
+;## FORWARD Zone -  delegation.lan.forward
+
+$ORIGIN delegation.lan.    ; default zone domain
+$TTL 86400                 ; default time to live
+
+@   IN  SOA ns1.delegation.lan. admin.delegation.lan. (
+           2024062701  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Minimum TTL
+           )
+
+           NS      ns1.delegation.lan.
+           NS      ns2.delegation.lan.
+           MX      10 mail.delegation.lan.
+
+firewall   IN     A    10.0.0.227
+firewall   IN     TXT  "Testing...1...2...3"
+laptop     IN     A    10.0.0.228
+xbox360    IN     A    10.0.0.223
+ps3        IN     A    10.0.0.224
+dhcp5      IN     A    10.0.0.225
+guest      CNAME       dhcp520
+mail       IN     A    10.0.0.226
+test       IN     A    10.0.0.229
+ns1        IN     A    10.0.0.201
+
+*       IN      A       10.0.0.99
+
+
+;## NSD authoritative only DNS
+;## delegation.lan.zone .:. https://calomel.org
+;## FORWARD Zone -  delegation.lan.forward
