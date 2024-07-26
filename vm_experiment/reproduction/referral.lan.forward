@@ -1,0 +1,35 @@
+;## NSD authoritative only DNS
+;## referral.lan.zone .:. https://calomel.org
+;## FORWARD Zone -  referral.lan.forward
+
+$ORIGIN referral.lan.    ; default zone domain
+$TTL 86400           ; default time to live
+
+@ IN SOA ns1.referral.lan. admin.referral.lan. (
+           3311010299  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Min TTL
+           )
+
+           NS      ns1.referral.lan.
+           NS      ns2.referral.lan.
+           MX      10 mail.referral.lan.
+
+firewall   IN     A    10.0.0.207
+firewall   IN     TXT  "Testing...1...2...3"
+laptop     IN     A    10.0.0.208
+xbox360    IN     A    10.0.0.203
+ps3        IN     A    10.0.0.204
+dhcp5      IN     A    10.0.0.205
+guest      CNAME       dhcp520
+mail       IN     A    10.0.0.206
+test       IN     A    10.0.0.252
+ns1        IN     A    10.0.0.200
+
+; Malicious referral response goes here:
+
+;## NSD authoritative only DNS
+;## referral.lan.zone .:. https://calomel.org
+;## FORWARD Zone - referral.lan.FORWARD
