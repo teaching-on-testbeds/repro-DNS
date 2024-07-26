@@ -1,0 +1,61 @@
+. IN SOA root-servers.net. a.root-servers.net. (
+           2011010203  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Min TTL
+           )
+
+; ####     NS      root-servers.net.
+; ####     MX      10 root-servers.net.
+
+firewall   IN     A    10.0.0.103
+firewall   IN     TXT  "Testing...1...2...3"
+guest      CNAME       dhcp520
+mail       CNAME       root-servers.net.
+; ### root-servers.net. A    10.0.0.101
+
+referral.lan.       172800  IN      NS      ns1.referral.lan.
+ns1.referral.lan.   172800  IN      A       10.0.0.200
+;## ns2.referral.lan.       172800  IN      A       10.0.0.200
+
+.                  IN   NS      a.root-servers.net.
+; #### .                   IN   NS      b.root-servers.net.
+
+a.root-servers.net.     IN      A       10.0.0.101
+; #### b.root-servers.net.      IN      A       10.0.0.102
+
+delegation.lan. 172800 IN NS ns1.delegation.lan.
+; delegation.lan. 172800 IN NS ns2.delegation.lan.
+ns1.delegation.lan. 172800 IN A 10.0.0.201
+; ns2.delegation.lan. 172800 IN A 10.0.0.201
+
+benign.lan. 172800 IN NS ns1.benign.lan.
+; benign.lan. 172800 IN NS ns2.benign.lan.
+ns1.benign.lan. 172800 IN A 10.0.0.100
+; ns2.benign.lan. 172800 IN A 10.0.0.100
+
+example.net            IN  A   10.0.0.83
+
+; #### Cycle test #######
+; #### example.lan     IN     NS ns1.example.lan
+; #### ns1.example.lan IN     A 10.0.0.238
+; #### example.org     IN     NS ns1.example.org
+; #### ns1.example.org IN     A 10.0.0.245
+
+; #### Cycle test end #######
+
+; #### NX-Redirection test started #######
+
+; #### *                                  CNAME *.example.net
+; #### example.net.      IN NS test.fake
+
+; ### fake11              IN NS attack.referral.lan
+
+; #### NX-Redirection test ended   #######
+
+; *          IN     A    10.0.0.99
+
+;## NSD authoritative only DNS
+;## .net.zone .:. https://calomel.org
+;## FORWARD Zone - .net.FORWARD
