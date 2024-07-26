@@ -1,0 +1,85 @@
+;## NSD authoritative only DNS
+;## benign.lan.zone .:. https://calomel.org
+;## FORWARD Zone -  benign.lan.forward
+
+$ORIGIN benign.lan.    ; default zone domain
+$TTL 86400           ; default time to live
+
+@ IN SOA ns1.benign.lan. admin.benign.lan. (
+           3311010299  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Min TTL
+           )
+
+           NS      ns1.benign.lan.
+           NS      ns2.benign.lan.
+           MX      10 mail.benign.lan.
+
+firewall   IN     A    10.0.0.160
+firewall   IN     TXT  "Testing...1...2...3"
+laptop     IN     A    10.0.0.161
+xbox360    IN     A    10.0.0.162
+ps3        IN     A    10.0.0.163
+dhcp5      IN     A    10.0.0.164
+guest      CNAME       dhcp520
+mail       IN     A    10.0.0.165
+test       IN     A    10.0.0.166
+ns1        IN     A    10.0.0.100
+;## ns2        IN     A    10.0.0.100
+
+b0.benign.lan.   IN  A   10.0.0.110
+b1.benign.lan.   IN  A   10.0.0.111
+b2.benign.lan.   IN  A   10.0.0.112
+b3.benign.lan.   IN  A   10.0.0.113
+b4.benign.lan.   IN  A   10.0.0.114
+b5.benign.lan.   IN  A   10.0.0.115
+b6.benign.lan.   IN  A   10.0.0.116
+b7.benign.lan.   IN  A   10.0.0.117
+b8.benign.lan.   IN  A   10.0.0.118
+b9.benign.lan.   IN  A   10.0.0.119
+b10.benign.lan.   IN  A   10.0.0.120
+b11.benign.lan.   IN  A   10.0.0.121
+b12.benign.lan.   IN  A   10.0.0.122
+b13.benign.lan.   IN  A   10.0.0.123
+b14.benign.lan.   IN  A   10.0.0.124
+b15.benign.lan.   IN  A   10.0.0.125
+b16.benign.lan.   IN  A   10.0.0.126
+b17.benign.lan.   IN  A   10.0.0.127
+b18.benign.lan.   IN  A   10.0.0.128
+b19.benign.lan.   IN  A   10.0.0.129
+b20.benign.lan.   IN  A   10.0.0.130
+b21.benign.lan.   IN  A   10.0.0.131
+b22.benign.lan.   IN  A   10.0.0.132
+b23.benign.lan.   IN  A   10.0.0.133
+b24.benign.lan.   IN  A   10.0.0.134
+b25.benign.lan.   IN  A   10.0.0.135
+b26.benign.lan.   IN  A   10.0.0.136
+b27.benign.lan.   IN  A   10.0.0.137
+b28.benign.lan.   IN  A   10.0.0.138
+b29.benign.lan.   IN  A   10.0.0.139
+b30.benign.lan.   IN  A   10.0.0.140
+b31.benign.lan.   IN  A   10.0.0.141
+b32.benign.lan.   IN  A   10.0.0.142
+b33.benign.lan.   IN  A   10.0.0.143
+b34.benign.lan.   IN  A   10.0.0.144
+b35.benign.lan.   IN  A   10.0.0.145
+b36.benign.lan.   IN  A   10.0.0.146
+b37.benign.lan.   IN  A   10.0.0.147
+b38.benign.lan.   IN  A   10.0.0.148
+b39.benign.lan.   IN  A   10.0.0.149
+b40.benign.lan.   IN  A   10.0.0.150
+b41.benign.lan.   IN  A   10.0.0.151
+b42.benign.lan.   IN  A   10.0.0.152
+b43.benign.lan.   IN  A   10.0.0.153
+b44.benign.lan.   IN  A   10.0.0.154
+b45.benign.lan.   IN  A   10.0.0.155
+b46.benign.lan.   IN  A   10.0.0.156
+b47.benign.lan.   IN  A   10.0.0.157
+b48.benign.lan.   IN  A   10.0.0.158
+b49.benign.lan.   IN  A   10.0.0.159
+
+;## NSD authoritative only DNS
+;## benign.lan.zone .:. https://calomel.org
+;## FORWARD Zone - benign.lan.FORWARD
