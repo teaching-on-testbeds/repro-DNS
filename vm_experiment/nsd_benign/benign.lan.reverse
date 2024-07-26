@@ -1,0 +1,26 @@
+;## NSD authoritative only DNS
+;## benign.lan.zone .:. https://calomel.org
+;## REVERSE Zone - benign.lan.reverse
+
+$ORIGIN benign.lan.  ; default zone domain
+$TTL 86400         ; default time to live
+
+0.0.10.in-addr.arpa. IN SOA ns1.benign.lan. admin.benign.lan. (
+           3311010299  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Min TTL
+           )
+
+160.0.0.10.in-addr.arpa.   IN PTR firewall
+161.0.0.10.in-addr.arpa.   IN PTR laptop
+162.0.0.10.in-addr.arpa.   IN PTR xbox360
+163.0.0.10.in-addr.arpa.   IN PTR ps3
+164.0.0.10.in-addr.arpa.   IN PTR dhcp5
+165.0.0.10.in-addr.arpa.   IN PTR mail
+100.0.0.10.in-addr.arpa. IN PTR ns1
+
+;## NSD authoritative only DNS
+;## benign.lan.zone .:. https://calomel.org
+;## REVERSE Zone - benign.lan.reverse
