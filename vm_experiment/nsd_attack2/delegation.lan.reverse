@@ -1,0 +1,23 @@
+;## NSD authoritative only DNS
+;## delegation.lan.zone .:. https://calomel.org
+;## REVERSE Zone - delegation.lan.reverse
+
+$ORIGIN 0.0.10.in-addr.arpa.
+$TTL 86400
+
+@   IN   SOA   ns1.delegation.lan. admin.delegation.lan. (
+           2024062701  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Minimum TTL
+           )
+
+    NS   ns1.delegation.lan.
+    NS   ns2.delegation.lan.
+
+201 IN PTR ns1.delegation.lan.
+
+;## NSD authoritative only DNS
+;## delegation.lan.zone .:. https://calomel.org
+;## REVERSE Zone - delegation.lan.reverse
