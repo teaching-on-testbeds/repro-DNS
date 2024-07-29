@@ -2,7 +2,7 @@ import string
 import random
 
 def foo():
-  f1 = open("attackerNamesE2.txt", "w")
+  f1 = open("attackerNames.txt", "w")
   for j in range(200):
     for i in range(100):
       reqAttack = 'attack{}.referral.lan.'.format(i)
