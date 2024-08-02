@@ -1,9 +1,9 @@
 #### Malicious client query
-During the experiment, the malicious client will issue queries that rely on the malicious referral response from the malicious-ref-server (.referral.com domain). Queries for the .referral.com domain should go to the resolver and the resolver should access the malicious-ref-server through the root-server.
+During the experiment, the malicious-client will issue queries that rely on the malicious referral response from the malicious-ref-server (.referral.lan domain). Queries for the .referral.lan domain should go to the resolver and the resolver should access the malicious-ref-server through the root-server.
 ![mal_test_route](https://github.com/user-attachments/assets/dd3f933d-37cb-4bef-b04e-06c10cc20809)
-We can perform an example query for a .referral.com name to test this resolution route.
+We can perform an example query for a .referral.lan name to test this resolution route.
 
-Open eight terminal windows: SSH into the seven nodes and SSH into the resolver again in the eigth terminal.
+Open eight terminal windows: SSH into the seven nodes and SSH into the resolver again in the eighth terminal.
 
 To start the resolver, run
 ```
@@ -35,7 +35,7 @@ After receiving the response, stop the resolver, the servers, and the tcpdump (y
 
 To view the output file from the packet capture, in the resolver terminal, run
 ```
-tshark -r ~/verify_dump
+tshark -r ~/malicious_verify
 ```
 You will see the entire DNS resolution route for the IP address associated with the name `firewall.referral.lan`:
 ```
@@ -65,4 +65,4 @@ You will see the entire DNS resolution route for the IP address associated with 
 
 The address `firewall.referral.lan` is configured in the zone file of the malicious-ref-server (10.0.0.200) and this test ensures that the resolver (10.0.2.1 interface with malicious-client, 10.0.0.1 interface with servers) accesses the authoritative servers through the root (10.0.0.101).
 
-(In our experiment, the benign client will not issue queries for names serviced by the malicious domains, however you can still observe the resolution route by running `dig firewall.referral.lan. @10.0.1.1` from the benign client. The only difference in the route will be the IP addresses of the client and the resolver/client interface).
+(In our experiment, the benign-client will not issue queries for names serviced by the malicious domains, but you can still observe the resolution route by running `dig firewall.referral.lan. @10.0.1.1` from the benign-client. The only difference in the route will be the IP addresses of the client and the resolver/client interface).
