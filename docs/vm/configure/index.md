@@ -1,8 +1,9 @@
 <!-- Configure resources -->
-#### Configure resources
+### Configure resources
 In your choice of terminal application, open a window for each of the seven nodes.
 
-When your nodes are ready, SSH into the malicious-client and the benign-client. The experiment will use the resperf[4] tool to send queries, both malicious and benign, at a fixed rate and track the response rate from the resolver. When your nodes are ready to log in, SSH into the malicious and benign client nodes and run
+#### Client machines
+The experiment will use the resperf[4] tool to send queries, both malicious and benign, at a fixed rate and track the response rate from the resolver. SSH into the malicious-client and benign-client nodes and run
 ```
 sudo apt update
 sudo apt-get install -y build-essential libssl-dev libldns-dev libck-dev libnghttp2-dev
@@ -13,7 +14,7 @@ cd dnsperf-2.8.0
 make
 sudo make install
 ```
-on both client machines to install the resperf tool.
+on both client machines to install Resperf.
 
 For the resperf tool, we need to provide input files containing a list of queries. On the malicious-client run
 ```
@@ -23,7 +24,9 @@ sudo cp /local/repository/vm_experiment/reproduction/genBenignNamesToCheck.py ~
 python genAttackNamesToCheck.py
 python genBenignNamesToCheck.py
 ```
-to generate `attackerNames.txt` file with a list of malicious names and a `benignNames.txt` file with a list of benign names. On the benign-client run
+to generate an `attackerNames.txt` file with a list of malicious names and a `benignNames.txt` file with a list of benign names.
+
+And On the benign-client run
 ```
 cd ~
 sudo cp /local/repository/vm_experiment/reproduction/genBenignNamesToCheck.py ~
@@ -31,7 +34,8 @@ python genBenignNamesToCheck.py
 ```
 to generate the `benignNames.txt` file.
 
-Next, we will configure the resolver. SSH into the resolver node and run
+#### Resolver
+Next, we will install BIND9[5], an open-source implementation of the DNS protocol, on the resolver. SSH into the resolver node and run
 ```
 git clone -b 9_16_6 https://github.com/ShaniBenAtya/bind9.git 
 cd bind9 
@@ -41,6 +45,9 @@ autoreconf -fi
 ./configure 
 make -j 4
 sudo make install
+```
+to install BIND9.16.6. Now provide the necessary directories and configuration files by running:
+```
 sudo touch /usr/local/etc/named.conf
 sudo cp /local/repository/vm_experiment/resolver/named.conf /usr/local/etc/named.conf
 sudo touch /usr/local/etc/db.root
@@ -48,11 +55,14 @@ sudo cp /local/repository/vm_experiment/resolver/db.root /usr/local/etc/db.root
 sudo mkdir -p /usr/local/var/cache/bind
 cd /usr/local/etc; sudo rndc-confgen -a
 ```
-to install and configure BIND9.16.6 on the resolver. You can verify the installation by running `named -v` and should see
+You can verify the installation by running `named -v` and should this message:
 ```
 BIND 9.16.6 (Stable Release)
 ```
-We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack
+We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack.
+
+#### Authoritative nameservers
+The authoritative servers will use Name Server Daemon (NSD), an open-source implementation of an authoritative DNS nameserver. 
 
 To configure the malicious referral authoritative, the authoritative server that responds to queries with the malicious referral response, SSH into the malicious-ref-server node and run:
 ```
