@@ -466,7 +466,7 @@ to open the result file with the KCachegrind tool. In the tool, make sure the "R
 
 ### Using VMs
 <!-- Get resources -->
-The docker environment was sufficient for measuring the cost of a malicious query. To accurately measure the attack's impact on benign client traffic, we want designated machines for each entity. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server.
+For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server.
 <!-- image of topology -->
 <!-- link to CloudLab profile -->
 
@@ -673,7 +673,7 @@ To view the results, open only the benign user output files from both sub-experi
 
 ### Debugging Tips
 <!-- debugging tips -->
-If there is an error stating that the port is already in use when turning on the authoritative servers, run `ps aux | grep nsd` and identify the process IDs. Run `kill <ID>`. Start the server again. 
+If there is an error stating that the port is already in use when turning on the authoritative servers, run `ps aux | grep nsd` and identify the process IDs. Run `sudo kill <ID>`. Start the server again. 
 
 ### References
 
