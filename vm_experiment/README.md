@@ -85,7 +85,7 @@ Configuration file '/etc/nsd/nsd.conf'
  The default action is to keep your current version.
 *** nsd.conf (Y/I/N/O/D/Z) [default=N] ? N
 ```
-choose "N" to use the configuration file we created in the previous step. During the installation you might get the message:
+choose "N" to use the configuration file we created in the previous step. After the installation you might get the message:
 ```
 Job for nsd.service failed because the control process exited with error code.
 See "systemctl status nsd.service" and "journalctl -xe" for details.
@@ -97,7 +97,7 @@ invoke-rc.d: initscript nsd, action "start" failed.
     Process: 2126 ExecStart=/usr/sbin/nsd -d (code=exited, status=1/FAILURE)
    Main PID: 2126 (code=exited, status=1/FAILURE)
 ```
-The following steps will handle the error. Create the necessary directories and add permissions for NSD:
+The following steps will handle the error. To finish configuring the server, add the necessary directories and permissions for NSD:
 ```
 sudo mkdir -p /run/nsd /var/db/nsd
 sudo touch /run/nsd/nsd.pid /var/db/nsd/nsd.db
@@ -111,7 +111,7 @@ sudo cp /local/repository/vm_experiment/nsd_attack2/delegation.lan.forward /etc/
 sudo cp /local/repository/vm_experiment/nsd_attack2/delegation.lan.reverse /etc/nsd/delegation.lan.reverse
 sudo cp /local/repository/vm_experiment/nsd_attack2/nsd.conf /etc/nsd/nsd.conf
 ```
-to load the zone and configuration files for the server into the correct directory. Then, install Name Server Daemon (NSD) on the server by running
+to load the zone and configuration files into the correct directory. Next, install Name Server Daemon (NSD) on the server by running:
 ```
 sudo apt update
 sudo apt-get install -y nsd
@@ -131,7 +131,7 @@ sudo cp /local/repository/vm_experiment/nsd_benign/benign.lan.forward /etc/nsd/b
 sudo cp /local/repository/vm_experiment/nsd_benign/benign.lan.reverse /etc/nsd/benign.lan.reverse
 sudo cp /local/repository/vm_experiment/nsd_benign/nsd.conf /etc/nsd/nsd.conf
 ```
-to load the zone and configuration files for the server into the correct directory. Next, install Name Server Daemon (NSD) on the server by running
+to load the zone and configuration files into the correct directory. Install NSD on the server by running:
 ```
 sudo apt update
 sudo apt-get install -y nsd
@@ -151,12 +151,12 @@ sudo cp /local/repository/vm_experiment/nsd_root/net.forward /etc/nsd/net.forwar
 sudo cp /local/repository/vm_experiment/nsd_root/net.reverse /etc/nsd/net.reverse
 sudo cp /local/repository/vm_experiment/nsd_root/nsd.conf /etc/nsd/nsd.conf
 ```
-to load the zone and configuration files for the server into the correct directory. And install Name Server Daemon (NSD) on the server by running
+to load the zone and configuration files into the correct directory. And install NSD on the server by running:
 ```
 sudo apt update
 sudo apt-get install -y nsd
 ```
-When prompted about the `etc/nsd/nsd.conf` configuration file, choose 'N' to keep your currently-installed version. Once NSD is installed run:
+When prompted about the `etc/nsd/nsd.conf` configuration file, choose 'N' to keep your currently-installed version. Once NSD is installed, run:
 ```
 sudo mkdir -p /run/nsd /var/db/nsd
 sudo touch /run/nsd/nsd.pid /var/db/nsd/nsd.db
@@ -164,7 +164,7 @@ sudo chown -R nsd:nsd /run/nsd /var/db/nsd
 ```
 to finish the server configuration.
 
-we can perform a basic test to check if the setup is ready and well configured. Have eight terminal windows open; SSH into all seven nodes, and SSH into the resolver again in the last terminal.
+we can perform a basic test to check if the setup is ready and well configured. Open eight terminal windows: SSH into all seven nodes and SSH into the resolver again in the last terminal.
 To start the resolver, run
 ```
 sudo named -g
@@ -180,8 +180,10 @@ In the second resolver terminal, start a tcpdump to capture DNS traffic:
 sudo tcpdump -i any -s 65535 port 53 -w ~.verify_dump
 ```
 Next, from the benign-client, query the resolver for the IP address of `firewall.referral.lan`. Run
-```dig firewall.referral.lan. @10.0.1.1```
-(or to test the query from the malicious-client run: `dig firewall.referral.lan. @10.0.2.1`). You should get a response with the IP address&mdash;`10.0.0.207`&mdash;of `firewall.referral.lan`:
+```
+dig firewall.referral.lan. @10.0.1.1
+```
+(or to test the query from the malicious-client run: `dig firewall.referral.lan. @10.0.2.1`). You should get a response with `10.0.0.207`&mdash;the IP address of `firewall.referral.lan`:
 ```
 ;; QUESTION SECTION:
 ;firewall.referral.lan.             IN      A
@@ -227,11 +229,13 @@ The second experiment will test the throughput without any attack. Commands will
 In the following tests, the malicious user command should be run first, but ultimately in parallel, to the benign user command. 
 
 SSH into the seven nodes.
+
 From the resolver, run
 ```
 sudo named -g
 ```
 to start BIND9 on the resolver.
+
 For each of the four authoritative servers, run
 ```
 sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db
@@ -248,9 +252,11 @@ From the benign-client machine, run
 ```
 resperf -d benignNames.txt -s 10.0.1.1 -v -R -P ~/with_attack
 ```
-where `-d benignNames.txt` is the input file with a list of benign names serviced by the benign_server, `-s 10.0.1.1` is the resolver IP address, and `with_attack` is the output file.
+where `-d benignNames.txt` is the input file with a list of benign names serviced by the benign-server, `-s 10.0.1.1` is the resolver IP address, and `with_attack` is the output file.
 
-Once the commands have finished executing, stop the resolver (Ctrl + C) in order to clear the cache. Next, to measure the throughput without any attack, "benignNames.txt" will be used as the input file for both commands (no malicious queries will be issued). Restart the resolver with `named -g`.
+Once the commands have finished executing, stop the resolver (Ctrl + C) in order to clear the cache. Restart the resolver with `named -g`.
+
+Next, to measure the throughput without any attack, "benignNames.txt" will be used as the input file for both commands (no malicious queries will be issued).
 
 From the malicious-client run
 ```
@@ -268,8 +274,6 @@ To view the results, open only the benign-client output files from both sub-expe
 
 ### Debugging Tips
 <!-- debugging tips -->
-If there is an error stating that the port is already in use when starting NSD on the authoritative servers, run `ps aux | grep nsd` and identify the process IDs. Run `sudo kill <ID>`. Start the server again. 
+If there is an error stating that the port is already in use when starting NSD on the authoritative servers, run `ps aux | grep nsd` and identify the process IDs. Run `sudo kill <ID>`. Start the server again.
 
-
-
-
+If you receive a `status: SERVFAIL` response when verifying the setup or when issuing benign queries, run `ps aux | grep nsd` on each server to check if NSD is running. If there are no NSD processes on the server, run `sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db` to start the server.
