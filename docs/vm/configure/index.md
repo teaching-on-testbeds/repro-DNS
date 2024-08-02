@@ -115,7 +115,7 @@ sudo cp /local/repository/vm_experiment/nsd_attack2/delegation.lan.forward /etc/
 sudo cp /local/repository/vm_experiment/nsd_attack2/delegation.lan.reverse /etc/nsd/delegation.lan.reverse
 sudo cp /local/repository/vm_experiment/nsd_attack2/nsd.conf /etc/nsd/nsd.conf
 ```
-to load the zone and configuration files into the correct directory. Next, install Name Server Daemon (NSD) on the server by running:
+to load the zone and configuration files into the correct directory. Next, install NSD on the server by running:
 ```
 sudo apt update
 sudo apt-get install -y nsd
@@ -167,3 +167,5 @@ sudo touch /run/nsd/nsd.pid /var/db/nsd/nsd.db
 sudo chown -R nsd:nsd /run/nsd /var/db/nsd
 ```
 to finish the server configuration.
+
+When you have finished installing the necessary files and software on each node, continue to the next section to verify your setup.
