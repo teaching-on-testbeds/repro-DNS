@@ -1,9 +1,9 @@
 #### Benign client query
-During the experiment, the benign client will issue queries that rely on the b-server (.benign.lan domain). Queries for the .benign.lan domain should go to the resolver and the resolver should access the benign-server through the root-server.
-
+During the experiment, the benign-client will issue queries that rely on the b-server (.benign.lan domain). Queries for the .benign.lan domain should go to the resolver and the resolver should access the benign-server through the root-server.
+![ben_test_route](https://github.com/user-attachments/assets/1cd4a9fc-a466-4b62-909d-fe9994bf0bf4)
 We can perform an example query for a .benign.lan name to test this resolution route.
 
-Open eight terminal windows: SSH into the seven nodes and SSH into the resolver again in the eigth terminal.
+Open eight terminal windows: SSH into the seven nodes and SSH into the resolver again in the eighth terminal.
 
 To start the resolver, run
 ```
