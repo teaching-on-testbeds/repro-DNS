@@ -1,7 +1,7 @@
 ## Results
 <!-- Here, you'll show: the original result in the paper and output from your experiment reproducing it. -->
 
-The following figure shows the instructions executed on the resolver CPU relative to the referral response size for both NXNS-patched and non-patched BIND9 resolvers from the original result in the paper:
+The goal of the attacker is to issue queries that significantly increase the CPU load of the resolver. The following figure shows the instructions executed on the resolver CPU relative to the referral response size for both NXNS-patched and non-patched BIND9 resolvers from the original result in the paper:
 
 ![attack_cost_paper](https://github.com/user-attachments/assets/a35ebdb7-3654-4c49-b24b-e3ca627a02a4)
 
