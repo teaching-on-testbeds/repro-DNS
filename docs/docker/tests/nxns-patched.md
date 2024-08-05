@@ -86,6 +86,6 @@ to open the malicious query results file with the KCachegrind tool. And run
 ```bash
 sudo kcachegrind $(eval echo ~)/benign_nxns_patched
 ```
-to open the bening query results file.
+to open the benign query results file.
 
-In the tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should have more than 2,000,000,000.
+In the KCachegrind interface, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should have more than 2,000,000,000.
