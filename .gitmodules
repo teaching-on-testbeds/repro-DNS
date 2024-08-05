@@ -1,0 +1,20 @@
+[submodule "external/dnssim/bind9"]
+    path = external/dnssim/bind9
+    url = https://github.com/ShaniBenAtya/bind9.git 
+    branch = 9_16_6
+
+[submodule "external/dnssim/bind9_16_2"]
+    path = external/dnssim/bind9_16_2
+    url = https://github.com/ShaniBenAtya/bind9.git 
+    branch = 9_16_2
+
+[submodule "external/dnssim/bind9_16_33"]
+    path = external/dnssim/bind9_16_33
+    url = https://github.com/ShaniBenAtya/bind9.git 
+    branch = 9_16_33
+
+
+[submodule "external/dnssim/nsd"]
+    path = external/dnssim/nsd
+    url = https://github.com/ShaniBenAtya/nsd.git
+    tag = NSD_4_3_3_REL
