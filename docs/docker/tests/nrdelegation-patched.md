@@ -32,7 +32,7 @@ From Client 1, query the resolver with a malicious query:
 dig attack0.home.lan.
 ```
 
-Stop the resolver and restart it with the Valgrind tool:
+Once the malicious name resolution fails, stop the resolver and restart it with the Valgrind tool:
 ```bash
 cd /etc
 valgrind --tool=callgrind --callgrind-out-file=benign_nrdelegation_patched named -g -c /etc/named.conf
