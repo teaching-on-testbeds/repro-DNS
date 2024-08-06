@@ -1,4 +1,4 @@
-#### Throughput measurement experiment
+### Throughput measurement experiment
 You will run two "sub"-experiments.
 
 The first experiment will test the effect of the attack on benign client throughput. Benign and malicious commands will be executed with an instance of the Resperf tool on the respective client. The malicious command will simulate the attacker and issue malicious queries at a fixed rate, while the benign command will issue the benign requests until failure.
@@ -39,11 +39,11 @@ Next, to measure the throughput without any attack, "benignNames.txt" will be us
 
 From the malicious-client run
 ```
-resperf -d benignNames.txt -s 10.0.1.1 -v -m 15000 -c 60 -r 0 -R -P ~/no_attack
+resperf -d benignNames.txt -s 10.0.2.1 -v -m 15000 -c 60 -r 0 -R -P ~/no_attack
 ```
 and from the benign-client run
 ```
-resperf -d benignNames.txt -s 10.0.2.1 -v -R -P ~/no_attack
+resperf -d benignNames.txt -s 10.0.1.1 -v -R -P ~/no_attack
 ```
 
 <!-- Analyze results -->
