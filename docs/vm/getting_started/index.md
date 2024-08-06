@@ -1,8 +1,8 @@
-### Run my experiment using VMs
+## Run my experiment using VMs
 <!-- Get resources -->
 First, reserve your resources. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server. Your complete topology will be:
 <!-- image of topology -->
-![vm_ex_topology](https://github.com/user-attachments/assets/835c0eb1-4677-4de4-9bc5-4be3da431f70)
+![vm_ex_topology](https://github.com/user-attachments/assets/fe5a12c9-08a6-44f6-804c-6354c187001b)
 
 To reserve these resources on Cloudlab, open this profile page:
 <!-- link to pre-established CloudLab profile -->
