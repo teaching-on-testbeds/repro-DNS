@@ -18,6 +18,7 @@ We use `--tool=callgrind` to specify that we are using the callgrind tool. `name
 
 The malicious referral response should include a long list of name servers, in order to create such a response, the `/env/nsd_attack/home.lan.forward` zone file needs to have 1500 records per one malicious request. From the Malicious server, run
 ```bash
+cp /env/nsd_attack/home.lan.forward /env/nsd_attack/home.lan.forward.back
 cp /env/reproduction/home.lan.forward /env/nsd_attack
 ```
 to load the zone file for the malicious authoritative server. Then run 
