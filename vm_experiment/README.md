@@ -2,7 +2,7 @@
 <!-- Get resources -->
 First, reserve your resources. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server. Your complete topology will be:
 <!-- image of topology -->
-![vm_ex_topology](https://github.com/user-attachments/assets/835c0eb1-4677-4de4-9bc5-4be3da431f70)
+![vm_ex_topology](https://github.com/user-attachments/assets/98507fc7-db63-4ed3-86bc-96319975a319)
 
 To reserve these resources on Cloudlab, open this profile page:
 <!-- link to pre-established CloudLab profile -->
