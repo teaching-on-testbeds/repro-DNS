@@ -559,7 +559,7 @@ plt.show()
 <!-- Get resources -->
 First, reserve your resources. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server. Your complete topology will be:
 <!-- image of topology -->
-![vm_ex_topology](https://github.com/user-attachments/assets/835c0eb1-4677-4de4-9bc5-4be3da431f70)
+![vm_ex_topology](https://github.com/user-attachments/assets/d3ca66b2-ef63-48ce-88ad-245ec0fef27b)
 
 To reserve these resources on Cloudlab, open this profile page:
 <!-- link to pre-established CloudLab profile -->
