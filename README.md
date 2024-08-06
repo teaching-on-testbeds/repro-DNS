@@ -1117,14 +1117,6 @@ To view the results, open only the benign-client output files from both sub-expe
 
 ### Debugging Tips
 <!-- debugging tips -->
-If there is an error stating that the port is already in use when starting NSD on the authoritative servers, run `ps aux | grep nsd` and identify the process IDs. Run `sudo kill <ID>`. Start the server again.
-
-If you receive a `status: SERVFAIL` response when verifying the setup or when issuing benign queries, run `ps aux | grep nsd` on each server to check if NSD is running. If there are no NSD processes on the server, run `sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db` to start the server.
-
-## Notes
-
-### Debugging Tips
-<!-- debugging tips -->
 - If there is an error stating that the port is already in use when turning on the authoritative servers, run `ps aux | grep nsd` and identify the process IDs. Run `sudo kill <ID>`. Start the server again.
 - If you receive a `status: SERVFAIL` response when verifying the setup or issuing a benign query, check if the resolver and the authoritative servers are up. Run `ps aux | grep named` on the resolver; if named is not running, start the resolver with `sudo named -g`. Run `ps aux | grep` on each server; if no NSD processes are running, start the server with `sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db`.
 
