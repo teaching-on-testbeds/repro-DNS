@@ -11,14 +11,13 @@ to change the version to BIND9.16.6.
 
 Turn on the resolver with Valgrind's callgrind tool by running
 ```bash
-cd /etc
-valgrind --tool=callgrind --callgrind-out-file=mal_nxns_patched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_patched named -g
 ```
 We use `--tool=callgrind` to specify that we are using the callgrind tool. `named` is the BIND9 service and `/etc/named.conf` is the configuration file.
 
 Turn on the authoritative servers by running 
 ```bash
-
+sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db
 ```
 in each server terminal. 
 
@@ -30,7 +29,7 @@ The malicious referral response contains 1500 records that delegate the resoluti
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
 ```bash
-valgrind --tool=callgrind --callgrind-out-file=benign_nxns_patched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_patched named -g
 ```
 
 Now, from the benign client, query the resolver with a legitimate query:
