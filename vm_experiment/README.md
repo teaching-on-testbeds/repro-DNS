@@ -186,6 +186,9 @@ to finish the server configuration.
 
 When you have finished installing the necessary files and software on each node, continue to the next section to verify your setup.
 
+### Verify Setup
+We can perform a basic test, issuing queries and recording the resolution route, to check if the setup is ready and well configured.
+
 #### Malicious client query
 During the experiment, the malicious-client will issue queries that rely on the malicious referral response from the malicious-ref-server (.referral.lan domain). Queries for the .referral.lan domain should go to the resolver and the resolver should access the malicious-ref-server through the root-server.
 ![mal_test_route](https://github.com/user-attachments/assets/dd3f933d-37cb-4bef-b04e-06c10cc20809)
@@ -324,9 +327,9 @@ The address `firewall.benign.lan` is configured in the zone file of the benign-s
 
 (You can observe the resolution route for a benign query issued by the malicious-client by running `dig firewall.benign.lan. @10.0.2.1` from the malicious-client. The only difference in the route will be the IP addresses of the client and the resolver/client interface).
 
-#### Instructions measurement experiment - NXNS-patched resolver
+### Instructions measurement experiment - NXNS-patched resolver
 
-This experiment will measure the CPU instructions executed on a NXNS-patched resolver (BIND9.16.6) during a malicious query compared to a benign query. The number of instructions will be recorded by an instance of the callgrind tool in the command to start the resolver.
+We will refer to the cost of a NRDelegation query as the number of resolver CPU instructions executed during a malicious query. This experiment will measure the CPU instructions executed on a NXNS-patched resolver (BIND9.16.6) during a malicious query compared to a benign query. The number of instructions will be recorded by an instance of the callgrind tool in the command to start the resolver.
 
 Make sure the resolver is configured to use BIND9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run:
 ```bash
@@ -503,7 +506,7 @@ to open the benign query results file.
 In the KCachegrind interface, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should be around 10,000,000.
 
 #### Throughput measurement experiment
-You will run two "sub"-experiments.
+The goal of the attacker during the NRDelegation is to consume resources, preventing the resolver from servicing benign clients. To observe the impact of the attack on victims, you will run two "sub"-experiments. 
 
 The first experiment will test the effect of the attack on benign client throughput. Benign and malicious commands will be executed with an instance of the Resperf tool on the respective client. The malicious command will simulate the attacker and issue malicious queries at a fixed rate, while the benign command will issue the benign requests until failure.
 
