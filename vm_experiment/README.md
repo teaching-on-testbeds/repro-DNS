@@ -1,14 +1,25 @@
-### Using VMs
+## Run my experiment using VMs
 <!-- Get resources -->
-For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server.
+First, reserve your resources. For this experiment, we will use a topology of a 7 nodes&mdash;a malicious client, a benign client, the resolver, two malicious authoritative servers, a benign authoritative server, and a root authoritative server. Your complete topology will be:
 <!-- image of topology -->
-<!-- link to CloudLab profile -->
+![vm_ex_topology](https://github.com/user-attachments/assets/835c0eb1-4677-4de4-9bc5-4be3da431f70)
+
+To reserve these resources on Cloudlab, open this profile page:
+<!-- link to pre-established CloudLab profile -->
+[https://www.cloudlab.us/p/nyunetworks/NRDelegationAttack](https://www.cloudlab.us/p/nyunetworks/NRDelegationAttack)
+
+Click "Next", then select the Cloudlab project that you are part of and a Cloudlab cluster with available resources. Then click "Next", and "Finish".
+
+Wait until all of the sources have turned green and have a small check mark in the top right corner of the "Topology View" tab, indicating that they are fully configured and ready to log in. Then, click on "List View" to get SSH login details for the hosts. Use these details to SSH into each.
+
+When you have logged in to each node, continue to the next section to configure your resources.
 
 <!-- Configure resources -->
-#### Configure resources
+### Configure resources
 In your choice of terminal application, open a window for each of the seven nodes.
 
-When your nodes are ready, SSH into the malicious-client and the benign-client. The experiment will use the resperf[4] tool to send queries, both malicious and benign, at a fixed rate and track the response rate from the resolver. When your nodes are ready to log in, SSH into the malicious and benign client nodes and run
+#### Client machines
+The experiment will use the resperf[4] tool to send queries, both malicious and benign, at a fixed rate and track the response rate from the resolver. SSH into the malicious-client and benign-client nodes and run
 ```
 sudo apt update
 sudo apt-get install -y build-essential libssl-dev libldns-dev libck-dev libnghttp2-dev
@@ -19,7 +30,7 @@ cd dnsperf-2.8.0
 make
 sudo make install
 ```
-on both client machines to install the resperf tool.
+on both client machines to install Resperf.
 
 For the resperf tool, we need to provide input files containing a list of queries. On the malicious-client run
 ```
@@ -29,7 +40,9 @@ sudo cp /local/repository/vm_experiment/reproduction/genBenignNamesToCheck.py ~
 python genAttackNamesToCheck.py
 python genBenignNamesToCheck.py
 ```
-to generate `attackerNames.txt` file with a list of malicious names and a `benignNames.txt` file with a list of benign names. On the benign-client run
+to generate an `attackerNames.txt` file with a list of malicious names and a `benignNames.txt` file with a list of benign names.
+
+And On the benign-client run
 ```
 cd ~
 sudo cp /local/repository/vm_experiment/reproduction/genBenignNamesToCheck.py ~
@@ -37,7 +50,8 @@ python genBenignNamesToCheck.py
 ```
 to generate the `benignNames.txt` file.
 
-Next, we will configure the resolver. SSH into the resolver node and run
+#### Resolver
+Next, we will install BIND9[5], an open-source implementation of the DNS protocol, on the resolver. SSH into the resolver node and run
 ```
 git clone -b 9_16_6 https://github.com/ShaniBenAtya/bind9.git 
 cd bind9 
@@ -47,6 +61,9 @@ autoreconf -fi
 ./configure 
 make -j 4
 sudo make install
+```
+to install BIND9.16.6. Now provide the necessary directories and configuration files by running:
+```
 sudo touch /usr/local/etc/named.conf
 sudo cp /local/repository/vm_experiment/resolver/named.conf /usr/local/etc/named.conf
 sudo touch /usr/local/etc/db.root
@@ -54,11 +71,14 @@ sudo cp /local/repository/vm_experiment/resolver/db.root /usr/local/etc/db.root
 sudo mkdir -p /usr/local/var/cache/bind
 cd /usr/local/etc; sudo rndc-confgen -a
 ```
-to install and configure BIND9.16.6 on the resolver. You can verify the installation by running `named -v` and should see
+You can verify the installation by running `named -v` and should this message:
 ```
 BIND 9.16.6 (Stable Release)
 ```
-We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack
+We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack.
+
+#### Authoritative nameservers
+The authoritative servers will use Name Server Daemon (NSD), an open-source implementation of an authoritative DNS nameserver. 
 
 To configure the malicious referral authoritative, the authoritative server that responds to queries with the malicious referral response, SSH into the malicious-ref-server node and run:
 ```
@@ -111,7 +131,7 @@ sudo cp /local/repository/vm_experiment/nsd_attack2/delegation.lan.forward /etc/
 sudo cp /local/repository/vm_experiment/nsd_attack2/delegation.lan.reverse /etc/nsd/delegation.lan.reverse
 sudo cp /local/repository/vm_experiment/nsd_attack2/nsd.conf /etc/nsd/nsd.conf
 ```
-to load the zone and configuration files into the correct directory. Next, install Name Server Daemon (NSD) on the server by running:
+to load the zone and configuration files into the correct directory. Next, install NSD on the server by running:
 ```
 sudo apt update
 sudo apt-get install -y nsd
@@ -164,7 +184,15 @@ sudo chown -R nsd:nsd /run/nsd /var/db/nsd
 ```
 to finish the server configuration.
 
-we can perform a basic test to check if the setup is ready and well configured. Open eight terminal windows: SSH into all seven nodes and SSH into the resolver again in the last terminal.
+When you have finished installing the necessary files and software on each node, continue to the next section to verify your setup.
+
+#### Malicious client query
+During the experiment, the malicious-client will issue queries that rely on the malicious referral response from the malicious-ref-server (.referral.lan domain). Queries for the .referral.lan domain should go to the resolver and the resolver should access the malicious-ref-server through the root-server.
+![mal_test_route](https://github.com/user-attachments/assets/dd3f933d-37cb-4bef-b04e-06c10cc20809)
+We can perform an example query for a .referral.lan name to test this resolution route.
+
+Open eight terminal windows: SSH into the seven nodes and SSH into the resolver again in the eighth terminal.
+
 To start the resolver, run
 ```
 sudo named -g
@@ -177,13 +205,13 @@ on each server.
 
 In the second resolver terminal, start a tcpdump to capture DNS traffic:
 ```
-sudo tcpdump -i any -s 65535 port 53 -w ~.verify_dump
+sudo tcpdump -i any -s 65535 port 53 -w ~/malicious_verify
 ```
-Next, from the benign-client, query the resolver for the IP address of `firewall.referral.lan`. Run
+Next, from the malicious-client, query the resolver for the IP address of `firewall.referral.lan`. Run
 ```
-dig firewall.referral.lan. @10.0.1.1
+dig firewall.referral.lan. @10.0.2.1
 ```
-(or to test the query from the malicious-client run: `dig firewall.referral.lan. @10.0.2.1`). You should get a response with `10.0.0.207`&mdash;the IP address of `firewall.referral.lan`:
+You should get a response with `10.0.0.207`&mdash;the IP address of `firewall.referral.lan`:
 ```
 ;; QUESTION SECTION:
 ;firewall.referral.lan.             IN      A
@@ -195,11 +223,11 @@ After receiving the response, stop the resolver, the servers, and the tcpdump (y
 
 To view the output file from the packet capture, in the resolver terminal, run
 ```
-tshark -r ~/verify_dump
+tshark -r ~/malicious_verify
 ```
 You will see the entire DNS resolution route for the IP address associated with the name `firewall.referral.lan`:
 ```
-1   0.000000   10.0.1.100 → 10.0.1.1     DNS 106 Standard query 0x2b2b A firewall.referral.lan OPT
+1   0.000000   10.0.2.200 → 10.0.2.1     DNS 106 Standard query 0x2b2b A firewall.referral.lan OPT
 2   0.011873     10.0.0.1 → 10.0.0.101   DNS 84 Standard query 0x9d48 NS <Root> OPT
 3   0.012299     10.0.0.1 → 10.0.0.101   DNS 90 Standard query 0x3a6b A _.lan OPT
 4   0.014269   10.0.0.101 → 10.0.0.1     DNS 119 Standard query response 0x9d48 NS <Root> NS a.root-servers.net A 10.0.0.101 OPT
@@ -214,10 +242,265 @@ You will see the entire DNS resolution route for the IP address associated with 
 13   0.026704     10.0.0.1 → 10.0.0.200   DNS 101 Standard query 0x1000 AAAA ns1.referral.lan OPT
 14   0.027800   10.0.0.200 → 10.0.0.1     DNS 162 Standard query response 0xc52a A firewall.referral.lan A 10.0.0.207 NS ns1.referral.lan NS ns2.referral.lan A 10.0.0.200 OPT
 15   0.027948   10.0.0.200 → 10.0.0.1     DNS 131 Standard query response 0x1000 AAAA ns1.referral.lan SOA ns1.referral.lan OPT
-16   0.033390     10.0.1.1 → 10.0.1.100   DNS 138 Standard query response 0x2b2b A firewall.referral.lan A 10.0.0.207 OPT
+16   0.033390     10.0.2.1 → 10.0.2.200   DNS 138 Standard query response 0x2b2b A firewall.referral.lan A 10.0.0.207 OPT
 ```
-The address `firewall.referral.lan` is configured in the zone file of the malicious-ref-server (10.0.0.200) and this test ensures that the resolver (10.0.0.1, 10.0.1.1) accesses the authoritative servers through the root (10.0.0.101).
+- firewall.home.lan query from client to resolver (from ip 10.0.2.200 to ip 10.0.2.1)
+- resolver query to the root server (from 10.0.0.1 to 10.0.0.101)
+- root-server return the ".referral.lan" address (from 10.0.0.101 to 10.0.0.1)
+- resolver query the ".referral.lan" (malicious-ref-server) address (from 10.0.0.1 to 10.0.0.200)
+- malicious-ref-server return the address (10.0.0.207) for the domain name "firewall.referral.lan" (from 10.0.0.200 to 10.0.0.1)
+- resolver return the address (10.0.0.207) to the client (from 10.0.2.1 to 10.0.2.200)
 
+The address `firewall.referral.lan` is configured in the zone file of the malicious-ref-server (10.0.0.200) and this test ensures that the resolver (10.0.2.1 interface with malicious-client, 10.0.0.1 interface with servers) accesses the authoritative servers through the root (10.0.0.101).
+
+(In our experiment, the benign-client will not issue queries for names serviced by the malicious domains, but you can still observe the resolution route by running `dig firewall.referral.lan. @10.0.1.1` from the benign-client. The only difference in the route will be the IP addresses of the client and the resolver/client interface).
+
+#### Benign client query
+During the experiment, the benign-client will issue queries that rely on the b-server (.benign.lan domain). Queries for the .benign.lan domain should go to the resolver and the resolver should access the benign-server through the root-server.
+![ben_test_route](https://github.com/user-attachments/assets/1cd4a9fc-a466-4b62-909d-fe9994bf0bf4)
+We can perform an example query for a .benign.lan name to test this resolution route.
+
+Open eight terminal windows: SSH into the seven nodes and SSH into the resolver again in the eighth terminal.
+
+To start the resolver, run
+```
+sudo named -g
+```
+And start the servers by running
+```
+sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db
+```
+on each server.
+
+In the second resolver terminal, start a tcpdump to capture DNS traffic:
+```
+sudo tcpdump -i any -s 65535 port 53 -w ~/benign_verify
+```
+Next, from the benign-client, query the resolver for the IP address of `firewall.benign.lan`. Run
+```
+dig firewall.benign.lan. @10.0.1.1
+```
+You should get a response with `10.0.0.240`&mdash;the IP address of `firewall.benign.lan`:
+```
+;; QUESTION SECTION:
+;firewall.benign.lan.             IN      A
+
+;; ANSWER SECTION:
+firewall.benign.lan.      86400   IN      A       10.0.0.240
+```
+After receiving the response, stop the resolver, the servers, and the tcpdump (you can use Ctrl + C).
+
+To view the output file from the packet capture, in the resolver terminal, run
+```
+tshark -r ~/benign_verify
+```
+You will see the entire DNS resolution route for the IP address associated with the name `firewall.benign.lan`:
+```
+1   0.000000   10.0.1.100 → 10.0.1.1     DNS 106 Standard query 0x2b2b A firewall.benign.lan OPT
+2   0.011873     10.0.0.1 → 10.0.0.101   DNS 84 Standard query 0x9d48 NS <Root> OPT
+3   0.012299     10.0.0.1 → 10.0.0.101   DNS 90 Standard query 0x3a6b A _.lan OPT
+4   0.014269   10.0.0.101 → 10.0.0.1     DNS 119 Standard query response 0x9d48 NS <Root> NS a.root-servers.net A 10.0.0.101 OPT
+5   0.014430   10.0.0.101 → 10.0.0.1     DNS 131 Standard query response 0x3a6b No such name A _.lan SOA root-servers.net OPT
+6   0.020878     10.0.0.1 → 10.0.0.101   DNS 103 Standard query 0xe1c9 AAAA a.root-servers.net OPT
+7   0.021340     10.0.0.1 → 10.0.0.101   DNS 99 Standard query 0xda8b A _.benign.lan OPT
+8   0.021686   10.0.0.101 → 10.0.0.1     DNS 126 Standard query response 0xe1c9 AAAA a.root-servers.net SOA root-servers.net OPT
+9   0.021913   10.0.0.101 → 10.0.0.1     DNS 121 Standard query response 0xda8b A _.benign.lan NS ns1.benign.lan A 10.0.0.100 OPT
+10   0.025186     10.0.0.1 → 10.0.0.100   DNS 106 Standard query 0xc52a A firewall.benign.lan OPT
+11   0.025688     10.0.0.1 → 10.0.0.101   DNS 101 Standard query 0x49d7 AAAA ns1.benign.lan OPT
+12   0.026488   10.0.0.101 → 10.0.0.1     DNS 119 Standard query response 0x49d7 AAAA ns1.benign.lan NS ns1.benign.lan A 10.0.0.100 OPT
+13   0.026704     10.0.0.1 → 10.0.0.100   DNS 101 Standard query 0x1000 AAAA ns1.benign.lan OPT
+14   0.027800   10.0.0.100 → 10.0.0.1     DNS 162 Standard query response 0xc52a A firewall.benign.lan A 10.0.0.240 NS ns1.benign.lan NS ns2.benign.lan A 10.0.0.100 OPT
+15   0.027948   10.0.0.100 → 10.0.0.1     DNS 131 Standard query response 0x1000 AAAA ns1.benign.lan SOA ns1.benign.lan OPT
+16   0.033390     10.0.1.1 → 10.0.1.100   DNS 138 Standard query response 0x2b2b A firewall.benign.lan A 10.0.0.240 OPT
+```
+- firewall.home.lan query from client to resolver (from ip 10.0.1.100 to ip 10.0.1.1)
+- resolver query to the root server (from 10.0.0.1 to 10.0.0.101)
+- root-server return the ".benign.lan" address (from 10.0.0.101 to 10.0.0.1)
+- resolver query the ".benign.lan" (benign-server) address (from 10.0.0.1 to 10.0.0.100)
+- benign-server return the address (10.0.0.240) for the domain name "firewall.benign.lan" (from 10.0.0.100 to 10.0.0.1)
+- resolver return the address (10.0.0.240) to the client (from 10.0.1.1 to 10.0.1.100)
+
+The address `firewall.benign.lan` is configured in the zone file of the benign-server (10.0.0.100) and this test ensures that the resolver (10.0.1.1 interface with benign-client, 10.0.0.1 interface with servers) accesses the authoritative servers through the root (10.0.0.101).
+
+(You can observe the resolution route for a benign query issued by the malicious-client by running `dig firewall.benign.lan. @10.0.2.1` from the malicious-client. The only difference in the route will be the IP addresses of the client and the resolver/client interface).
+
+#### Instructions measurement experiment - NXNS-patched resolver
+
+This experiment will measure the CPU instructions executed on a NXNS-patched resolver (BIND9.16.6) during a malicious query compared to a benign query. The number of instructions will be recorded by an instance of the callgrind tool in the command to start the resolver.
+
+Make sure the resolver is configured to use BIND9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run:
+```bash
+cd bind9
+make install
+```
+to change the version to BIND9.16.6.
+
+Turn on the resolver with Valgrind's callgrind tool by running
+```bash
+sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_patched named -g
+```
+We use `--tool=callgrind` to specify that we are using the callgrind tool. `named` is the BIND9 service and `/etc/named.conf` is the configuration file.
+
+Turn on the authoritative servers by running 
+```bash
+sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db
+```
+in each server terminal. 
+
+From the malicious client, query the resolver (interface IP 10.0.2.1) with a malicious query:
+```bash
+dig attack0.referral.lan. @10.0.2.1
+```
+The malicious referral response contains 1500 records that delegate the resolution of `attack0.referral.lan` to a DNS non-responsive server. You will not receive a resolution for the name `attack.referral.lan` because the resolver was directed to resolve the name at a server incapable of responding to the DNS queries.
+
+Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
+```bash
+sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_patched named -g
+```
+
+Now, from the benign client, query the resolver with a legitimate query:
+```bash
+dig b0.benign.lan. @10.0.1.1
+```
+You should receive a response with the IP address of `b0.benign.lan` (10.0.0.110).
+```
+;; QUESTION SECTION:
+;b0.benign.lan.                 IN      A
+
+;; ANSWER SECTION:
+b0.benign.lan.          86400   IN      A  10.0.0.110
+```
+After receiving the response, stop the resolver.
+
+In Cloudlab, open the VNC window on the resolver node and run
+```bash
+sudo kcachegrind mal_nxns_patched
+```
+to open the malicious query results file with the KCachegrind tool. And run
+```bash
+sudo kcachegrind benign_nxns_patched
+```
+to open the benign query results file.
+
+In the KCachegrind interface, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should have more than 2,000,000,000.
+
+### Instructions measurement experiment - NXNS-unpatched resolver
+
+This experiment follows the instructions from the NXNS-patched experiment, but uses a BIND9.16.2 resolver, which is an NXNS-unpatched resolver, instead of a BIND9.16.6 resolver. 
+
+To change the BIND9 version, run
+```bash
+cd bind9_16_2
+make install
+```
+to configure the resolver to use BIND9.16.2.
+
+Turn on the resolver with Valgrind's callgrind tool by running
+```bash
+sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_unpatched named -g
+```
+
+If the authoritative servers are not running (you can check if the `nsd` process is running with the `ps aux | grep nsd` command), run 
+```bash
+sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db
+```
+in each server terminal.
+
+From the malicious client, query the resolver (interface IP 10.0.2.1) with a malicious query:
+```bash
+dig attack0.referral.lan. @10.0.2.1
+```
+The malicious referral response contains 1500 records that delegate the resolution of `attack0.referral.lan` to a DNS non-responsive server. You will not receive a resolution for the name `attack.referral.lan` because the resolver was directed to resolve the name at a server incapable of responding to the DNS queries.
+
+Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
+```bash
+sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_unpatched named -g
+```
+
+Now, from the benign client, query the resolver with a legitimate query:
+```bash
+dig b0.benign.lan. @10.0.1.1
+```
+You should receive a response with the IP address of `b0.benign.lan` (10.0.0.110).
+```
+;; QUESTION SECTION:
+;b0.benign.lan.                 IN      A
+
+;; ANSWER SECTION:
+b0.benign.lan.          86400   IN      A  10.0.0.110
+```
+After receiving the response, stop the resolver.
+
+In Cloudlab, open the VNC window on the resolver node and run
+```bash
+sudo kcachegrind mal_nxns_unpatched
+```
+to open the malicious query results file with the KCachegrind tool. And run
+```bash
+sudo kcachegrind benign_nxns_unpatched
+```
+to open the benign query results file.
+
+In the KCachegrind interface, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should be around 200,000,000.
+
+### Instructions measurement experiment - NRDelegation-patched resolver
+
+This experiment follows the instructions from the NXNS-patched experiment, but uses a BIND9.16.33 resolver, which is a NRDelegation-patched resolver, instead of a BIND9.16.6 resolver. 
+
+To change the BIND9 version, run
+```bash
+cd bind9_16_33
+make install
+```
+to configure the resolver to use BIND9.16.33.
+
+Turn on the resolver with Valgrind's callgrind tool by running
+```bash
+sudo valgrind --tool=callgrind --callgrind-out-file=mal_nrdelegation_patched named -g
+```
+
+If the authoritative servers are not running (you can check if the `nsd` process is running with the `ps aux | grep nsd` command), run 
+```bash
+sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db
+```
+in each server terminal.
+
+From the malicious client, query the resolver (interface IP 10.0.2.1) with a malicious query:
+```bash
+dig attack0.referral.lan. @10.0.2.1
+```
+The malicious referral response contains 1500 records that delegate the resolution of `attack0.referral.lan` to a DNS non-responsive server. You will not receive a resolution for the name `attack.referral.lan` because the resolver was directed to resolve the name at a server incapable of responding to the DNS queries.
+
+Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
+```bash
+sudo valgrind --tool=callgrind --callgrind-out-file=benign_nrdelegation_patched named -g
+```
+
+Now, from the benign client, query the resolver with a legitimate query:
+```bash
+dig b0.benign.lan. @10.0.1.1
+```
+You should receive a response with the IP address of `b0.benign.lan` (10.0.0.110).
+```
+;; QUESTION SECTION:
+;b0.benign.lan.                 IN      A
+
+;; ANSWER SECTION:
+b0.benign.lan.          86400   IN      A  10.0.0.110
+```
+After receiving the response, stop the resolver.
+
+In Cloudlab, open the VNC window on the resolver node and run
+```bash
+sudo kcachegrind mal_nrdelegation_patched
+```
+to open the malicious query results file with the KCachegrind tool. And run
+```bash
+sudo kcachegrind benign_nrdelegation_patched
+```
+to open the benign query results file.
+
+In the KCachegrind interface, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should be around 10,000,000.
 
 #### Throughput measurement experiment
 You will run two "sub"-experiments.
