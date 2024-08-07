@@ -3,3 +3,4 @@ We will refer to the cost of a NRDelegation query as the number of resolver CPU 
 - [Test NRDelegationAttack on a NXNS-patched resolver](nxns-patched.md)
 - [Test NRDelegationAttack on a NXNS-unpatched resolver](nxns-unpatched.md)
 - [Test NRDelegationAttack on a NRDelegation-patched resolver](nrdelegation-patched.md)
+- [Test NRDelegationAttack with different referral list lengths](other-tests.md)
