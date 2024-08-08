@@ -5,7 +5,7 @@ This experiment will measure the CPU instructions executed on a NXNS-patched res
 Make sure the resolver is configured to use BIND9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run:
 ```bash
 cd bind9
-make install
+sudo make install
 ```
 to change the version to BIND9.16.6.
 
