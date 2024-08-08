@@ -1,1 +1,24 @@
+;## NSD authoritative only DNS
+;## net.zone .:. https://calomel.org
+;## REVERSE Zone - .net.reverse
 
+0.0.10.in-addr.arpa. IN SOA  root-servers.net. a.root-servers.net. (
+           2011010203  ; serial number
+           28800       ; Refresh
+           7200        ; Retry
+           864000      ; Expire
+           86400       ; Min TTL
+           )
+
+103.0.0.10.in-addr.arpa.   IN PTR firewall
+9.0.0.10.in-addr.arpa.   IN PTR guest
+7.0.0.10.in-addr.arpa.   IN PTR mail
+
+200.0.0.10.in-addr.arpa.   IN PTR ns1.referral.lan.
+201.0.0.10.in-addr.arpa.   IN PTR ns1.delegation.lan.
+100.0.0.10.in-addr.arpa.   IN PTR ns1.benign.lan.
+101.0.0.10.in-addr.arpa. IN PTR root-servers.net.
+
+;## NSD authoritative only DNS
+;## .net.zone .:. https://calomel.org
+;## REVERSE Zone - .net.reverse
