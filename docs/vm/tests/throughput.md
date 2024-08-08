@@ -11,9 +11,11 @@ SSH into the seven nodes.
 
 From the resolver, run
 ```
+cd bind9
+sudo make install
 sudo named -g
 ```
-to start BIND9 on the resolver.
+to start BIND9.16.6 (vulnerable to NRDelegationAttack) on the resolver.
 
 For each of the four authoritative servers, run
 ```
