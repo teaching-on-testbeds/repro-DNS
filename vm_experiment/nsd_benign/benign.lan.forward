@@ -17,15 +17,15 @@ $TTL 86400           ; default time to live
            NS      ns2.benign.lan.
            MX      10 mail.benign.lan.
 
-firewall   IN     A    10.0.0.160
+firewall   IN     A    10.0.0.240
 firewall   IN     TXT  "Testing...1...2...3"
-laptop     IN     A    10.0.0.161
-xbox360    IN     A    10.0.0.162
-ps3        IN     A    10.0.0.163
-dhcp5      IN     A    10.0.0.164
+laptop     IN     A    10.0.0.241
+xbox360    IN     A    10.0.0.242
+ps3        IN     A    10.0.0.243
+dhcp5      IN     A    10.0.0.244
 guest      CNAME       dhcp520
-mail       IN     A    10.0.0.165
-test       IN     A    10.0.0.166
+mail       IN     A    10.0.0.245
+test       IN     A    10.0.0.246
 ns1        IN     A    10.0.0.100
 ;## ns2        IN     A    10.0.0.100
 
@@ -79,6 +79,56 @@ b46.benign.lan.   IN  A   10.0.0.156
 b47.benign.lan.   IN  A   10.0.0.157
 b48.benign.lan.   IN  A   10.0.0.158
 b49.benign.lan.   IN  A   10.0.0.159
+b50.benign.lan.   IN  A   10.0.0.160
+b51.benign.lan.   IN  A   10.0.0.161
+b52.benign.lan.   IN  A   10.0.0.162
+b53.benign.lan.   IN  A   10.0.0.163
+b54.benign.lan.   IN  A   10.0.0.164
+b55.benign.lan.   IN  A   10.0.0.165
+b56.benign.lan.   IN  A   10.0.0.166
+b57.benign.lan.   IN  A   10.0.0.167
+b58.benign.lan.   IN  A   10.0.0.168
+b59.benign.lan.   IN  A   10.0.0.169
+b60.benign.lan.   IN  A   10.0.0.170
+b61.benign.lan.   IN  A   10.0.0.171
+b62.benign.lan.   IN  A   10.0.0.172
+b63.benign.lan.   IN  A   10.0.0.173
+b64.benign.lan.   IN  A   10.0.0.174
+b65.benign.lan.   IN  A   10.0.0.175
+b66.benign.lan.   IN  A   10.0.0.176
+b67.benign.lan.   IN  A   10.0.0.177
+b68.benign.lan.   IN  A   10.0.0.178
+b69.benign.lan.   IN  A   10.0.0.179
+b70.benign.lan.   IN  A   10.0.0.180
+b71.benign.lan.   IN  A   10.0.0.181
+b72.benign.lan.   IN  A   10.0.0.182
+b73.benign.lan.   IN  A   10.0.0.183
+b74.benign.lan.   IN  A   10.0.0.184
+b75.benign.lan.   IN  A   10.0.0.185
+b76.benign.lan.   IN  A   10.0.0.186
+b77.benign.lan.   IN  A   10.0.0.187
+b78.benign.lan.   IN  A   10.0.0.188
+b79.benign.lan.   IN  A   10.0.0.189
+b80.benign.lan.   IN  A   10.0.0.190
+b81.benign.lan.   IN  A   10.0.0.191
+b82.benign.lan.   IN  A   10.0.0.192
+b83.benign.lan.   IN  A   10.0.0.193
+b84.benign.lan.   IN  A   10.0.0.194
+b85.benign.lan.   IN  A   10.0.0.195
+b86.benign.lan.   IN  A   10.0.0.196
+b87.benign.lan.   IN  A   10.0.0.197
+b88.benign.lan.   IN  A   10.0.0.198
+b89.benign.lan.   IN  A   10.0.0.199
+b90.benign.lan.   IN  A   10.0.0.230
+b91.benign.lan.   IN  A   10.0.0.231
+b92.benign.lan.   IN  A   10.0.0.232
+b93.benign.lan.   IN  A   10.0.0.233
+b94.benign.lan.   IN  A   10.0.0.234
+b95.benign.lan.   IN  A   10.0.0.235
+b96.benign.lan.   IN  A   10.0.0.236
+b97.benign.lan.   IN  A   10.0.0.237
+b98.benign.lan.   IN  A   10.0.0.238
+b99.benign.lan.   IN  A   10.0.0.239
 
 ;## NSD authoritative only DNS
 ;## benign.lan.zone .:. https://calomel.org
