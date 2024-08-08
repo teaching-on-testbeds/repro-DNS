@@ -5,7 +5,7 @@ This experiment follows the instructions from the NXNS-patched experiment, but u
 To change the BIND9 version, run
 ```bash
 cd bind9_16_2
-make install
+sudo make install
 ```
 to configure the resolver to use BIND9.16.2.
 
