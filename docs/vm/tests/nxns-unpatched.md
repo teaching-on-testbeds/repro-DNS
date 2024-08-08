@@ -11,7 +11,7 @@ to configure the resolver to use BIND9.16.2.
 
 Turn on the resolver with Valgrind's callgrind tool by running
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_unpatched named -g
+cd ~ ; sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_unpatched named -g
 ```
 
 If the authoritative servers are not running (you can check if the `nsd` process is running with the `ps aux | grep nsd` command), run 
