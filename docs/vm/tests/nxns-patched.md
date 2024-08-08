@@ -11,7 +11,7 @@ to change the version to BIND9.16.6.
 
 Turn on the resolver with Valgrind's callgrind tool by running
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_patched named -g
+cd ~ ; sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_patched named -g
 ```
 We use `--tool=callgrind` to specify that we are using the callgrind tool. `named` is the BIND9 service and `/etc/named.conf` is the configuration file.
 
