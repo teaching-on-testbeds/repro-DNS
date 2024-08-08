@@ -5,13 +5,13 @@ This experiment follows the instructions from the NXNS-patched experiment, but u
 To change the BIND9 version, run
 ```bash
 cd bind9_16_33
-make install
+sudo make install
 ```
 to configure the resolver to use BIND9.16.33.
 
 Turn on the resolver with Valgrind's callgrind tool by running
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=mal_nrdelegation_patched named -g
+cd ~ ; sudo valgrind --tool=callgrind --callgrind-out-file=mal_nrdelegation_patched named -g
 ```
 
 If the authoritative servers are not running (you can check if the `nsd` process is running with the `ps aux | grep nsd` command), run 
