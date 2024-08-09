@@ -1,6 +1,6 @@
-#### Instructions measurement experiment - NXNS-unpatched resolver
+### Instructions measurement experiment - NXNS-unpatched resolver
 
-This experiment follows the instructions from the NXNS-patched experiment, but uses a BIND9.16.2 resolver, which is an NXNS-unpatched resolver, instead of a BIND9.16.6 resolver. 
+This experiment follows the instructions from the NXNS-patched experiment, but uses a BIND9.16.2 resolver, which is an NXNS-unpatched resolver. 
 
 To change the BIND9 version, run
 ```bash
@@ -28,7 +28,7 @@ The malicious referral response contains 1500 records that delegate the resoluti
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_unpatched named -g
+cd ~ ; sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_unpatched named -g
 ```
 
 Now, from the benign client, query the resolver with a legitimate query:
@@ -45,6 +45,11 @@ b0.benign.lan.          86400   IN      A  10.0.0.110
 ```
 After receiving the response, stop the resolver.
 
+Add permissions to open the files:
+```
+sudo chown $USER mal_nxns_patched
+sudo chown $USER benign_nxns_patched
+```
 In Cloudlab, open the VNC window on the resolver node and run
 ```bash
 sudo kcachegrind mal_nxns_unpatched
