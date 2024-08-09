@@ -81,7 +81,7 @@ sudo make install
 ```
 You can switch the version by navigating into the directory and running `sudo make install` (use `named -v` to check the version). This experiment will use BIND9.16.6 first, run:
 ```
-cd bind9
+cd ~/bind9
 sudo make install
 ```
 
