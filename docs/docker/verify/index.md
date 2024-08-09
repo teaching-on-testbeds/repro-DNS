@@ -1,4 +1,4 @@
-#### Turn on the environment
+### Turn on the environment
 
 <!-- screen session -->
 This experiment requires you have 6 terminal windows open&mdash;1 terminal will be a terminal on the host node, and 5 terminals will be docker environment terminals. In this experiment the terminals will be referred to as follows:
@@ -52,7 +52,7 @@ to turn on the malicious authoritative server.
 
 See the Debugging Tips section if you encountered an error when turning on the server(s).
 
-#### Verify the setup
+### Verify the setup
 Now that our resolver and authoritative servers are running, we can perform a basic test to check if the setup is ready and well configured.
 
 In the Client 1 terminal, run
