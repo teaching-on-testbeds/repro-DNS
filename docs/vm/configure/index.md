@@ -3,7 +3,7 @@
 In your choice of terminal application, open a window for each of the seven nodes.
 
 #### Client machines
-The experiment will use the resperf[4] tool to send queries, both malicious and benign, at a fixed rate and track the response rate from the resolver. SSH into the malicious-client and benign-client nodes and run
+The experiment will use the resperf[5] tool to send queries, both malicious and benign, and track the response rate from the resolver. SSH into the malicious-client and benign-client nodes and run
 ```
 sudo apt update
 sudo apt-get install -y build-essential libssl-dev libldns-dev libck-dev libnghttp2-dev
@@ -35,7 +35,7 @@ python genBenignNamesToCheck.py
 to generate the `benignNames.txt` file.
 
 #### Resolver
-Next, we will install BIND9[5], an open-source implementation of the DNS protocol, on the resolver. SSH into the resolver node and run
+Next, we will install BIND9[6], an open-source implementation of the DNS protocol, on the resolver. SSH into the resolver node and run
 ```
 git clone -b 9_16_6 https://github.com/ShaniBenAtya/bind9.git 
 cd bind9 
@@ -59,10 +59,34 @@ You can verify the installation by running `named -v` and should this message:
 ```
 BIND 9.16.6 (Stable Release)
 ```
-We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack.
+We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack. We can also test a NXNS-unpatched version (BIND9.16.2) and a NRDelegation-patched version (BIND9.16.33). To install these versions run:
+```
+cd ~
+git clone -b 9_16_2 https://github.com/ShaniBenAtya/bind9.git bind9_16_2
+cd bind9_16_2
+autoreconf -fi 
+./configure 
+make -j 4
+sudo make install
+```
+to install BIND9.16.2 and run
+```
+cd ~
+git clone -b 9_16_33 https://github.com/ShaniBenAtya/bind9.git bind9_16_33
+cd bind9_16_33
+autoreconf -fi 
+./configure 
+make -j 4
+sudo make install
+```
+You can switch the version by navigating into the directory and running `sudo make install` (use `named -v` to check the version). This experiment will use BIND9.16.6 first, run:
+```
+cd bind9
+sudo make install
+```
 
 #### Authoritative nameservers
-The authoritative servers will use Name Server Daemon (NSD), an open-source implementation of an authoritative DNS nameserver. 
+The authoritative servers will use Name Server Daemon[7] (NSD), an open-source implementation of an authoritative DNS nameserver. 
 
 To configure the malicious referral authoritative, the authoritative server that responds to queries with the malicious referral response, SSH into the malicious-ref-server node and run:
 ```
