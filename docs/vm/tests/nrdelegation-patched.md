@@ -1,4 +1,4 @@
-#### Instructions measurement experiment - NRDelegation-patched resolver
+### Instructions measurement experiment - NRDelegation-patched resolver
 
 This experiment follows the instructions from the NXNS-patched experiment, but uses a BIND9.16.33 resolver, which is a NRDelegation-patched resolver, instead of a BIND9.16.6 resolver. 
 
@@ -28,7 +28,7 @@ The malicious referral response contains 1500 records that delegate the resoluti
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=benign_nrdelegation_patched named -g
+cd ~ ; sudo valgrind --tool=callgrind --callgrind-out-file=benign_nrdelegation_patched named -g
 ```
 
 Now, from the benign client, query the resolver with a legitimate query:
@@ -44,6 +44,12 @@ You should receive a response with the IP address of `b0.benign.lan` (10.0.0.110
 b0.benign.lan.          86400   IN      A  10.0.0.110
 ```
 After receiving the response, stop the resolver.
+
+Add permissions to open the files:
+```
+sudo chown $USER mal_nrdelegation_patched
+sudo chown $USER benign_nrdelegation_patched
+```
 
 In Cloudlab, open the VNC window on the resolver node and run
 ```bash
