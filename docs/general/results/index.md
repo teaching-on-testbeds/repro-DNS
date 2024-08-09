@@ -13,7 +13,7 @@ Efforts to reproduce the instructions measurement experiments recorded 2,775,000
 
 ![attack_cost_repro](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/attack_cost_docker_repro.png)
 
-(The Cost(n) function was developed in Afek et al. [1]  and predicts the number of instructions executed during a NRDelegationAttack on BIND9. The function depends only on the number of referrals in the referral response)
+(The Cost(n) function was developed in Afek et al. [1] and predicts the number of instructions executed during a NRDelegationAttack on BIND9. The function depends only on the number of referrals in the referral response.)
 
 This experiment will measure the instructions executed for malicious and benign queries on patched and unpatched BIND9 implementations&mdash;you should observe around 200,000 instructions for a benign query, more than 2,000,000,000 instructions for a malicious query on the NXNS-patched resolver, and around 200,000,000 on the NXNS-unpatched resolver. Additionally, we will test malicious and benign queries on a resolver patched against the NRDelegationAttack.
 
