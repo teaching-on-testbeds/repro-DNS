@@ -1,14 +1,16 @@
+### Instructions measurement experiment - referral list length
+
 So far, our experiments used a referral response list with 1500 NS names per malicious query (i.e. the referral response delegates the resolution of attack0.home.lan. to 1500 different NS names). We can modify the malicious referral list size, e.g. 100, 500, 1000 records per malicious queries, and test the cost of a malicious query.
 
 To edit the file that generates the referral response, run:
 ```
 sudo nano /env/reproduction/genAttackers.py
 ```
-and change the range in line 6 (`for i in range(1500)`) to your desired value. Write out, exit the editor, and run
+and change the range in line 6 (`for i in range(1500)`) to your desired value. Write out, exit the editor, and run:
 ```
 python /env/reproduction/genAttackers.py
 ```
-to run the updated script that generates the output file `attackerNameServers.txt` with the referral list. Next run
+to execute the updated script that generates the output file `attackerNameServers.txt` with the referral list. Next run
 ```
 cp /env/nsd_attack/home.lan.forward.bak /env/nsd_attack/home.lan.forward
 sed -i '/ns2        IN     A    127.0.0.201/r attackerNameServers.txt' /env/nsd_attack/home.lan.forward
@@ -17,7 +19,7 @@ to update the malicious server zone file with the new referral response list.
 
 You now can perform the instructions measurment experiments again to explore how the cost of a query varies with the number of referrals. Repeat the previous steps to change the number of referrals to another value. 
 
-After you have performed the experiments for different numbers of referrals, you can generate a graphical representation of your data. Create a .py file and copy and paste the following code into the file:
+After you have performed the experiments for different numbers of referrals, you can generate a graphical representation of your data (this step requires you to have python and matplotlib installed). Create a .py file and copy and paste the following code into the file:
 ```
 import matplotlib.pyplot as plt
 
