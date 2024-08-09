@@ -1,10 +1,10 @@
-#### Instructions measurement experiment - NXNS-patched resolver
+### Instructions measurement experiment - NXNS-patched resolver
 
 This experiment will measure the CPU instructions executed on a NXNS-patched resolver (BIND9.16.6) during a malicious query compared to a benign query. The number of instructions will be recorded by an instance of the callgrind tool in the command to start the resolver.
 
 Make sure the resolver is configured to use BIND9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run:
 ```bash
-cd bind9
+cd ~/bind9
 sudo make install
 ```
 to change the version to BIND9.16.6.
@@ -29,7 +29,7 @@ The malicious referral response contains 1500 records that delegate the resoluti
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_patched named -g
+cd ~ ; sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_patched named -g
 ```
 
 Now, from the benign client, query the resolver with a legitimate query:
@@ -46,6 +46,11 @@ b0.benign.lan.          86400   IN      A  10.0.0.110
 ```
 After receiving the response, stop the resolver.
 
+Add permissions to open the files:
+```
+sudo chown $USER mal_nxns_patched
+sudo chown $USER benign_nxns_patched
+```
 In Cloudlab, open the VNC window on the resolver node and run
 ```bash
 sudo kcachegrind mal_nxns_patched
@@ -56,4 +61,4 @@ sudo kcachegrind benign_nxns_patched
 ```
 to open the benign query results file.
 
-In the KCachegrind interface, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should have more than 2,000,000,000.
+In the KCachegrind tool, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should have more than 2,000,000,000.
