@@ -1,6 +1,6 @@
-#### Instructions measurement experiment - NXNS-unpatched resolver
+### Instructions measurement experiment - NXNS-unpatched resolver
 
-This experiment follows the instructions from the NXNS-patched experiment, but uses a BIND9.16.2 resolver, which is an NXNS-unpatched resolver, instead of a BIND9.16.6 resolver. 
+This experiment follows the instructions from the NXNS-patched experiment, but uses a BIND9.16.2 resolver, which is an NXNS-unpatched resolver. 
 
 To change the BIND9 version, run
 ```bash
