@@ -1,4 +1,4 @@
-#### Instructions measurement experiment - NXNS-patched resolver
+### Instructions measurement experiment - NXNS-patched resolver
 
 This experiment will measure the CPU instructions executed on a NXNS-patched resolver (BIND9.16.6) during a malicious query compared to a benign query. The number of instructions will be recorded by an instance of the callgrind tool in the command to start the resolver.
 
@@ -88,5 +88,7 @@ to open the malicious query results file with the KCachegrind tool. And run
 sudo kcachegrind $(eval echo ~)/benign_nxns_patched
 ```
 to open the benign query results file.
+
+![interpreting_kcachegrind_output](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/interpreting_kcachegrind_output.svg)
 
 In the KCachegrind interface, make sure the "Relative" button is unchecked and choose the "Instructions Fetch" tab. Record the "Incl." value of the `fctx_getaddresses` function for both results files. Compare the results. The benign query should be around 200,000 instructions, while the malicious query should have more than 2,000,000,000.
