@@ -11,7 +11,7 @@ SSH into the seven nodes.
 
 From the resolver, run
 ```
-cd bind9
+cd ~/bind9
 sudo make install
 sudo named -g
 ```
