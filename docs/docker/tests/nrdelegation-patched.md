@@ -1,4 +1,4 @@
-#### Instructions measurement experiment - NRDelegation-patched resolver
+### Instructions measurement experiment - NRDelegation-patched resolver
 
 This experiment will measure the instructions executed on a resolver implementation (BIND9.16.33) patched against the NRDelegationAttack.
 
