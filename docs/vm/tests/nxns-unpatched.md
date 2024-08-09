@@ -47,8 +47,8 @@ After receiving the response, stop the resolver.
 
 Add permissions to open the files:
 ```
-sudo chown $USER mal_nxns_patched
-sudo chown $USER benign_nxns_patched
+sudo chown $USER mal_nxns_unpatched
+sudo chown $USER benign_nxns_unpatched
 ```
 In Cloudlab, open the VNC window on the resolver node and run
 ```bash
