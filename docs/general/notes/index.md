@@ -3,7 +3,7 @@
 ### Debugging Tips
 <!-- debugging tips -->
 - If there is an error stating that the port is already in use when turning on the authoritative servers, run `ps aux | grep nsd` and identify the process IDs. Run `sudo kill <ID>`. Start the server again.
-- If you receive a `status: SERVFAIL` response when verifying the setup or issuing a benign query, check if the resolver and the authoritative servers are up. Run `ps aux | grep named` on the resolver; if named is not running, start the resolver with `sudo named -g`. Run `ps aux | grep` on each server; if no NSD processes are running, start the server with `sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db`.
+- If you receive a `status: SERVFAIL` response when verifying the setup or issuing a benign query, check if the resolver and the authoritative servers are up. Run `ps aux | grep named` on the resolver; if named is not running, start the resolver with `sudo named -g`. Run `ps aux | grep` on each server; if no NSD processes are running, start the server with `sudo nsd -c nsd.conf -d -f nsd.db` if using the docker, and `sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db` if using the VM setup.
 
 ### References
 
@@ -16,3 +16,7 @@
 [4] ISC. [https://downloads.isc.org/isc/bind9/9.16.33/doc/arm/html/notes.html#security-fixes](https://downloads.isc.org/isc/bind9/9.16.33/doc/arm/html/notes.html#security-fixes), 2022.
 
 [5] Nominum. resperf(1) - Linux man page. [https://linux.die.net/man/1/resperf](https://linux.die.net/man/1/resperf), May 2019.
+
+[6] ISC. https://www.isc.org/downloads/bind, 2021.
+
+[7] NLNETLABS. https://www.nlnetlabs.nl/projects/nsd/about/, 2021.
