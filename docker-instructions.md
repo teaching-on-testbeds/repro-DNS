@@ -42,13 +42,14 @@ the NXNSAttack, to amplify the effect of the malicious NRDelegation
 requests. The NXNSAttack\[2\], uses a malicious referral response with a
 list of non-existent nameservers. Upon receiving the malicious response,
 the resolver attempts to simultaneously resolve all names in the list.
-`<!--Figure of NXNSAttack-->`{=html}
-![NXNSAttack](https://github.com/user-attachments/assets/d5ca753c-3132-42e7-9d07-6ebb67d8e5ed)
+
+![NXNSAttack_flow](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/NXNSAttack_flow.svg)
 
 To mitigate the effects of this attack, a referral limit and a
 "DNS_ADBFIND_NOFETCH" flag were implemented.
-`<!--Figure of NXNSAttack w/ mitigations-->`{=html}
-![NXNSAttack_mitigations](https://github.com/user-attachments/assets/ed05125c-4fd8-4db9-90db-0bef3587f1fa)
+
+![NXNSAttack_mitigations_flow](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/NXNSAttack_mitigations_flow.svg)
+
 The resolver starts only resolving k, the referral limit, names and if
 all k attempts fail the resolution is aborted. The referral limit k = 5
 for the BIND9 resolver used in this experiment, but varies for different
@@ -63,24 +64,28 @@ response, n = 1500 nameserver names, that delegates the resolution to a
 server non-responsive to DNS requests. The attack begins with the
 malicious client querying for a name that relies on the referral
 response.
-![NRDelegationAttack1](https://github.com/user-attachments/assets/f41ef7c1-7915-4018-af42-5a992698b477)
+
+![NRDelegationAttack_flow1](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/NRDelegationAttack_flow1.svg)
+
 To process the referral response, the resolver looks up each of the n
-names in its cache and local memory for an existing resolution,
-totalling 2n lookups. Next, if k \> n, the resolver turns on the "No
-Fetch" flag and starts resolving k of the n names. Each such name leads
-the resolver to a server that responds with the IP address of a server
-that is nonresponsive to DNS queries. Upon receiving this response a
-restart event is triggerd. The "No Fetch" flag is cleared because
-preserving it could prevent a valid name resolution, and in parallel,
-the resolver 1. restarts resolving the referral response for the next k
-names, while 2. querying the received IP address and fails to get a
-response. The attack will loop through the names in referral response,
-repeating the 2n lookups. The following figure shows the
-NRDelegationAttack after a restart event, processing the next k names:
-![NRDelegationAttack2](https://github.com/user-attachments/assets/ee67324c-ca8b-4c68-a458-59ad47501369)
-The attack continues until either a restart limit is reached or a
-timeout occurs. The main source of the attack's resource consumption is
-the repetition of the 2n lookups.
+names in its cache and local memory for an existing resolution, totaling
+2n lookups. Next, if k \> n, the resolver turns on the "No Fetch" flag
+and starts resolving k of the n names. Each such name leads the resolver
+to a server that responds with the IP address of a server that is
+nonresponsive to DNS queries. Upon receiving this response a restart
+event is triggerd. The "No Fetch" flag is cleared because preserving it
+could prevent a valid name resolution, and in parallel, the resolver 1.
+restarts resolving the referral response for the next k names, while 2.
+querying the received IP address and fails to get a response. The attack
+will loop through the names in referral response, repeating the 2n
+lookups.
+
+![NRDelegationAttack_resolution](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/mal_resolution.svg)
+
+The attack continues, the resolver attempting to process the referral
+response in blocks of k names, until either a restart limit is reached
+or a timeout occurs. The main source of the attack's resource
+consumption is the repetition of the 2n lookups.
 
 ## Results
 
@@ -92,7 +97,7 @@ instructions executed on the resolver CPU relative to the referral
 response size for both NXNS-patched and non-patched BIND9 resolvers from
 the original result in the paper:
 
-![attack_cost_paper](https://github.com/user-attachments/assets/a35ebdb7-3654-4c49-b24b-e3ca627a02a4)
+![attack_cost_paper](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/attack_cost_paper.png)
 
 As the NXNS attack mitigations empower their NRDelegationAttack, Afek et
 al. \[1\] finds that a resolver patched against the NXNS attack is more
@@ -109,12 +114,12 @@ Efforts to reproduce the instructions measurement experiments recorded
 2,775,000,000 instructions for a malicious query and around 200,000
 instructions for a benign query on a NXNS-patched resolver.
 
-![attack_cost_repro](https://github.com/user-attachments/assets/993b98a2-7da7-4241-b651-2b1acfdf4e15)
+![attack_cost\_\_docker_repro](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/attack_cost__docker_repro.png)
 
-(The cost(n) function was developed in Afek et al. \[1\] and predicts
+(The Cost(n) function was developed in Afek et al. \[1\] and predicts
 the number of instructions executed during a NRDelegationAttack on
 BIND9. The function depends only on the number of referrals in the
-referral response)
+referral response.)
 
 This experiment will measure the instructions executed for malicious and
 benign queries on patched and unpatched BIND9 implementations---you
@@ -128,7 +133,7 @@ Afek et al. \[1\] proposed three different mitigation mechanisms. The
 following figure shows the original results in the paper for the
 reduction in the effect of the attack under the proposed mitigations:
 
-![mitigations_cost_paper](https://github.com/user-attachments/assets/a1aaa63c-68e4-4b52-b189-1fa4a0edc3ee)
+![mitigations_cost_paper](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/mitigations_cost_paper.png)
 
 Following the responsible disclosure procedure by Afek et al. \[1\],
 CVE-2022-2795 \[3\] was issued and the Internet Systems Consortium
@@ -138,14 +143,15 @@ version \[4\]. The figure below encompasses the results we obtained when
 reproducing the NRDelegationAttack on NXNS-patched, NXNS-unpatched, and
 NRDelegation-patched resolver implementations.
 
-![attack_cost_mitigation_repro](https://github.com/user-attachments/assets/a52e7eca-ce3d-43a2-8efa-aa6d48c85a73)
+![attack_cost_mitigation_repro](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/comparison_BINDv_docker_repro.png)
 
 When analyzing the effectiveness of a DDoS attack, we are interested in
-the attack's impact on resolver throughput (the ratio between resolver
-responses per second and received queries per second). The experiment
-will test resolver throughput with and without the NRDelegationAttack.
+the attack's impact on throughput (the ratio of responses per second to
+queries per second) between the resolver and benign clients. The
+experiment will test the throughput with and without the
+NRDelegationAttack.
 
-![throughput_no_attack](https://github.com/user-attachments/assets/bede7339-17f8-459e-b21b-b105c0150faf)![throughput_attack](https://github.com/user-attachments/assets/14b58229-1fa5-406a-b8df-4da5f3dc43e6)
+![throughput_no_attack](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/throughput_comparison.png)
 
 When the resolver is under attack, you should observe a significant
 performance degradation: the benign client receives 0 responses per
@@ -160,15 +166,16 @@ This experiment will measure the cost of a malicious NRDelegationAttack
 query in instructions executed on the resolver CPU. For this experiment,
 we will use a topology of a single node:
 
-![docker_ex_topology](https://github.com/user-attachments/assets/e29def83-8bc5-4d78-b17c-29d7ecdb7a1d)
+![docker_topology](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/docker_topology.svg)
 
 Open this profile page:
 <https://www.cloudlab.us/p/PortalProfiles/small-lan>
 
 Click "Next", then choose 1 node, select UBUNTU 20.04 as the disk image,
-and check the box for "Start X11 VNC on your nodes". ![Screenshot
-2024-08-04
-184446](https://github.com/user-attachments/assets/608e65d3-8f67-4ad6-8f66-9d66110f497d)
+and check the box for "Start X11 VNC on your nodes".
+
+![reserve_node](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/reserve_node.png)
+
 Click "Next", then select the Cloudlab project that you are part of and
 a Cloudlab cluster with available resources. Click "Next" and then
 "Finish".
@@ -179,7 +186,7 @@ corner in the "Topology View" tab signaling that your node is ready for
 you to log in. Then, click on "List View" to get SSH login details for
 the host. Use these details to SSH into the node.
 
-When you have logged in to each node, continue to the next section to
+When you have logged in to your node, continue to the next section to
 configure your resources.
 
 ### Configure Resources
@@ -256,7 +263,7 @@ to install KCachegrind.
 When you have finished installing the necessary software dependencies,
 continue to the next section to verify your setup.
 
-#### Turn on the environment
+### Turn on the environment
 
 <!-- screen session -->
 
@@ -327,7 +334,7 @@ to turn on the malicious authoritative server.
 See the Debugging Tips section if you encountered an error when turning
 on the server(s).
 
-#### Verify the setup
+### Verify the setup
 
 Now that our resolver and authoritative servers are running, we can
 perform a basic test to check if the setup is ready and well configured.
@@ -400,16 +407,7 @@ cost of malicious and benign queries on a NXNS-patched resolver
 (BIND9.16.6), a NXNS-unpatched resolver (BIND9.16.2), and a
 NRDelegation-patched resolver (9.16.33).
 
--   [Test NRDelegationAttack on a NXNS-patched
-    resolver](nxns-patched.md)
--   [Test NRDelegationAttack on a NXNS-unpatched
-    resolver](nxns-unpatched.md)
--   [Test NRDelegationAttack on a NRDelegation-patched
-    resolver](nrdelegation-patched.md)
--   [Test NRDelegationAttack with different referral list
-    lengths](other-tests.md)
-
-#### Instructions measurement experiment - NXNS-patched resolver
+### Instructions measurement experiment - NXNS-patched resolver
 
 This experiment will measure the CPU instructions executed on a
 NXNS-patched resolver (BIND9.16.6) during a malicious query compared to
@@ -539,6 +537,8 @@ sudo kcachegrind $(eval echo ~)/benign_nxns_patched
 
 to open the benign query results file.
 
+![interpreting_kcachegrind_output](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/interpreting_kcachegrind_output.svg)
+
 In the KCachegrind interface, make sure the "Relative" button is
 unchecked and choose the "Instructions Fetch" tab. Record the "Incl."
 value of the `fctx_getaddresses` function for both results files.
@@ -546,11 +546,11 @@ Compare the results. The benign query should be around 200,000
 instructions, while the malicious query should have more than
 2,000,000,000.
 
-#### Instructions measurement experiment - NXNS-unpatched resolver
+### Instructions measurement experiment - NXNS-unpatched resolver
 
 This experiment follows the instructions from the NXNS-patched
 experiment, but uses a BIND9.16.2 resolver, which is an NXNS-unpatched
-resolver, instead of a BIND9.16.6 resolver.
+resolver.
 
 To change the BIND9 version, run
 
@@ -644,7 +644,7 @@ choose the "Instructions Fetch" tab. Record the "Incl." value of the
 benign query results should be around 200,000 instructions, while the
 malicious query should have around 200,000,000.
 
-#### Instructions measurement experiment - NRDelegation-patched resolver
+### Instructions measurement experiment - NRDelegation-patched resolver
 
 This experiment will measure the instructions executed on a resolver
 implementation (BIND9.16.33) patched against the NRDelegationAttack.
@@ -741,6 +741,8 @@ Make sure the "Relative" button is unchecked and choose the
 benign query results should be around 200,000 instructions, while the
 malicious query should have around 10,000,000.
 
+### Instructions measurement experiment - referral list length
+
 So far, our experiments used a referral response list with 1500 NS names
 per malicious query (i.e. the referral response delegates the resolution
 of attack0.home.lan. to 1500 different NS names). We can modify the
@@ -752,11 +754,11 @@ To edit the file that generates the referral response, run:
     sudo nano /env/reproduction/genAttackers.py
 
 and change the range in line 6 (`for i in range(1500)`) to your desired
-value. Write out, exit the editor, and run
+value. Write out, exit the editor, and run:
 
     python /env/reproduction/genAttackers.py
 
-to run the updated script that generates the output file
+to execute the updated script that generates the output file
 `attackerNameServers.txt` with the referral list. Next run
 
     cp /env/nsd_attack/home.lan.forward.bak /env/nsd_attack/home.lan.forward
@@ -771,8 +773,9 @@ Repeat the previous steps to change the number of referrals to another
 value.
 
 After you have performed the experiments for different numbers of
-referrals, you can generate a graphical representation of your data.
-Create a .py file and copy and paste the following code into the file:
+referrals, you can generate a graphical representation of your data
+(this step requires you to have python and matplotlib installed). Create
+a .py file and copy and paste the following code into the file:
 
     import matplotlib.pyplot as plt
 
@@ -846,7 +849,9 @@ Create a .py file and copy and paste the following code into the file:
     resolver; if named is not running, start the resolver with
     `sudo named -g`. Run `ps aux | grep` on each server; if no NSD
     processes are running, start the server with
-    `sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db`.
+    `sudo nsd -c nsd.conf -d -f nsd.db` if using the docker, and
+    `sudo nsd -c /etc/nsd/nsd.conf -d -f /var/db/nsd/nsd.db` if using
+    the VM setup.
 
 ### References
 
@@ -870,3 +875,7 @@ Association, August 2020. Retrieved from
 
 \[5\] Nominum. resperf(1) - Linux man page.
 <https://linux.die.net/man/1/resperf>, May 2019.
+
+\[6\] ISC. https://www.isc.org/downloads/bind, 2021.
+
+\[7\] NLNETLABS. https://www.nlnetlabs.nl/projects/nsd/about/, 2021.
