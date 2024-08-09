@@ -1,6 +1,8 @@
 #### Malicious client query
 During the experiment, the malicious-client will issue queries that rely on the malicious referral response from the malicious-ref-server (.referral.lan domain). Queries for the .referral.lan domain should go to the resolver and the resolver should access the malicious-ref-server through the root-server.
-![mal_test_route](https://github.com/user-attachments/assets/dd3f933d-37cb-4bef-b04e-06c10cc20809)
+
+![mal_test_route](https://github.com/grcmcdvtt/repro-DNS/raw/main/images/mal_test_route.svg)
+
 We can perform an example query for a .referral.lan name to test this resolution route.
 
 Open eight terminal windows: SSH into the seven nodes and SSH into the resolver again in the eighth terminal.
