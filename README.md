@@ -87,11 +87,19 @@ The experiment will use the resperf[4] tool to send queries, both malicious and 
 ```
 sudo apt update
 sudo apt-get install -y build-essential libssl-dev libldns-dev libck-dev libnghttp2-dev
+```
+```
 wget https://www.dns-oarc.net/files/dnsperf/dnsperf-2.8.0.tar.gz
 tar xzf dnsperf-2.8.0.tar.gz
 cd dnsperf-2.8.0
+```
+```
 ./configure
+```
+```
 make
+```
+```
 sudo make install
 ```
 on both client machines to install Resperf.
@@ -119,11 +127,18 @@ Next, we will install BIND9[5], an open-source implementation of the DNS protoco
 ```
 git clone -b 9_16_6 https://github.com/ShaniBenAtya/bind9.git 
 cd bind9 
-sudo apt update 
-sudo apt-get install -y python3 python3-ply libuv1-dev pkg-config autoconf automake libtool libssl-dev libcap-dev valgrind # snapd
+sudo add-apt-repository ppa:kubuntu-ppa/backports; sudo apt update; sudo apt-get install -y python3 python3-ply libuv1-dev pkg-config autoconf automake libtool libssl-dev libcap-dev dbus-x11 valgrind kcachegrind
+```
+```
 autoreconf -fi 
+```
+```
 ./configure 
+```
+```
 make -j 4
+```
+```
 sudo make install
 ```
 to install BIND9.16.6. Now provide the necessary directories and configuration files by running:
@@ -139,7 +154,7 @@ You can verify the installation by running `named -v` and should this message:
 ```
 BIND 9.16.6 (Stable Release)
 ```
-We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack.\
+We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack.
 
 Install tshark, with the following command:
 
@@ -285,7 +300,7 @@ on each server.
 
 In the second resolver terminal, start a tcpdump to capture DNS traffic:
 ```
-sudo tcpdump -i any -s 65535 port 53 -w ~/malicious_verify
+sudo tcpdump -i any -s 65535 port 53 -w ~/malicious_verify.pcap
 ```
 Next, from the malicious-client, query the resolver for the IP address of `firewall.referral.lan`. Run
 ```
@@ -354,7 +369,7 @@ on each server.
 
 In the second resolver terminal, start a tcpdump to capture DNS traffic:
 ```
-sudo tcpdump -i any -s 65535 port 53 -w ~/benign_verify
+sudo tcpdump -i any -s 65535 port 53 -w ~/benign_verify.pcap
 ```
 Next, from the benign-client, query the resolver for the IP address of `firewall.benign.lan`. Run
 ```
@@ -372,7 +387,7 @@ After receiving the response, stop the resolver, the servers, and the tcpdump (y
 
 To view the output file from the packet capture, in the resolver terminal, run
 ```
-tshark -r ~/benign_verify
+tshark -r ~/benign_verify.pcap
 ```
 You will see the entire DNS resolution route for the IP address associated with the name `firewall.benign.lan`:
 ```
@@ -410,14 +425,17 @@ We will refer to the cost of a NRDelegation query as the number of resolver CPU 
 
 Make sure the resolver is configured to use BIND9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run:
 ```bash
-cd bind9
-make install
+cd ~/bind9
+git checkout -f 9_16_6
+./configure 
+make -j 4
+sudo make install
 ```
 to change the version to BIND9.16.6.
 
 Turn on the resolver with Valgrind's callgrind tool by running
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_patched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=~/mal_nxns_patched named -g
 ```
 We use `--tool=callgrind` to specify that we are using the callgrind tool. `named` is the BIND9 service and `/etc/named.conf` is the configuration file.
 
@@ -435,7 +453,7 @@ The malicious referral response contains 1500 records that delegate the resoluti
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_patched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=~/benign_nxns_patched named -g
 ```
 
 Now, from the benign client, query the resolver with a legitimate query:
@@ -480,7 +498,7 @@ to configure the resolver to use BIND9.16.2.
 
 Turn on the resolver with Valgrind's callgrind tool by running
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=mal_nxns_unpatched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=~/mal_nxns_unpatched named -g
 ```
 
 If the authoritative servers are not running (you can check if the `nsd` process is running with the `ps aux | grep nsd` command), run 
@@ -497,7 +515,7 @@ The malicious referral response contains 1500 records that delegate the resoluti
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=benign_nxns_unpatched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=~/benign_nxns_unpatched named -g
 ```
 
 Now, from the benign client, query the resolver with a legitimate query:
@@ -542,7 +560,7 @@ to configure the resolver to use BIND9.16.33.
 
 Turn on the resolver with Valgrind's callgrind tool by running
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=mal_nrdelegation_patched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=~/mal_nrdelegation_patched named -g
 ```
 
 If the authoritative servers are not running (you can check if the `nsd` process is running with the `ps aux | grep nsd` command), run 
@@ -559,7 +577,7 @@ The malicious referral response contains 1500 records that delegate the resoluti
 
 Stop the resolver (Ctrl+C) and restart it with the Valgrind tool:
 ```bash
-sudo valgrind --tool=callgrind --callgrind-out-file=benign_nrdelegation_patched named -g
+sudo valgrind --tool=callgrind --callgrind-out-file=~/benign_nrdelegation_patched named -g
 ```
 
 Now, from the benign client, query the resolver with a legitimate query:
