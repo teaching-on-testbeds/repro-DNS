@@ -148,7 +148,7 @@ sudo cp /local/repository/vm_experiment/resolver/named.conf /usr/local/etc/named
 sudo touch /usr/local/etc/db.root
 sudo cp /local/repository/vm_experiment/resolver/db.root /usr/local/etc/db.root
 sudo mkdir -p /usr/local/var/cache/bind
-cd /usr/local/etc; sudo rndc-confgen -a
+cd /usr/local/etc; sudo rndc-confgen -a; cd ~/
 ```
 You can verify the installation by running `named -v` and should this message:
 ```
@@ -156,18 +156,13 @@ BIND 9.16.6 (Stable Release)
 ```
 We use version 9.16.6 because it is a NXNS-patched version and most vulnerable to the NRDelegationAttack.
 
-Install tshark, with the following command:
+And finally install tshark, with the following command:
 
 ```
 sudo apt-get install -y tshark
 ```
 
 Select/write `yes` when prompted. 
-
-And finally install kcachegrind
-```
-#sudo snap install kcachegrind
-```
 
 #### Authoritative nameservers
 The authoritative servers will use Name Server Daemon (NSD), an open-source implementation of an authoritative DNS nameserver. 
