@@ -418,7 +418,7 @@ The address `firewall.benign.lan` is configured in the zone file of the benign-s
 
 We will refer to the cost of a NRDelegation query as the number of resolver CPU instructions executed during a malicious query. This experiment will measure the CPU instructions executed on a NXNS-patched resolver (BIND9.16.6) during a malicious query compared to a benign query. The number of instructions will be recorded by an instance of the callgrind tool in the command to start the resolver.
 
-Make sure the resolver is configured to use BIND9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run:
+Make sure the resolver is configured to use BIND9.16.6. Run `named -v` to check the version. If the resolver is using a different version, run (line-by-line):
 ```bash
 cd ~/bind9
 git checkout -f 9_16_6
@@ -467,11 +467,11 @@ After receiving the response, stop the resolver.
 
 Pull up your Cloudlab experiment page, locate the resolver node and click on the blue gear icon to open the VNC window on the resolver node and run
 ```bash
-sudo kcachegrind mal_nxns_patched
+sudo kcachegrind ~/mal_nxns_patched
 ```
 to open the malicious query results file with the KCachegrind tool. And run
 ```bash
-sudo kcachegrind benign_nxns_patched
+sudo kcachegrind ~/benign_nxns_patched
 ```
 to open the benign query results file.
 
@@ -486,7 +486,11 @@ To change the BIND9 version, run
 cd ~/bind9
 git checkout -f 9_16_2
 ./configure 
+```
+```
 make -j 4
+```
+```
 sudo make install
 ```
 to configure the resolver to use BIND9.16.2.
@@ -529,11 +533,11 @@ After receiving the response, stop the resolver.
 
 In Cloudlab, open the VNC window on the resolver node and run
 ```bash
-sudo kcachegrind mal_nxns_unpatched
+sudo kcachegrind ~/mal_nxns_unpatched
 ```
 to open the malicious query results file with the KCachegrind tool. And run
 ```bash
-sudo kcachegrind benign_nxns_unpatched
+sudo kcachegrind ~/benign_nxns_unpatched
 ```
 to open the benign query results file.
 
@@ -548,7 +552,11 @@ To change the BIND9 version, run
 cd ~/bind9
 git checkout -f 9_16_33
 ./configure 
+```
+```
 make -j 4
+```
+```
 sudo make install
 ```
 to configure the resolver to use BIND9.16.33.
@@ -591,11 +599,11 @@ After receiving the response, stop the resolver.
 
 In Cloudlab, open the VNC window on the resolver node and run
 ```bash
-sudo kcachegrind mal_nrdelegation_patched
+sudo kcachegrind ~/mal_nrdelegation_patched
 ```
 to open the malicious query results file with the KCachegrind tool. And run
 ```bash
-sudo kcachegrind benign_nrdelegation_patched
+sudo kcachegrind ~/benign_nrdelegation_patched
 ```
 to open the benign query results file.
 
